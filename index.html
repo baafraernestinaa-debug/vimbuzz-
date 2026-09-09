@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description" content="VimBuzz — Ghana's home for trending news, football, entertainment, technology and lifestyle.">
+  <meta name="keywords" content="Ghana news, Ghana football, entertainment, technology, VimBuzz">
+  <meta name="author" content="VimBuzz">
+
+  <title>VimBuzz — Ghana's Trending Hub</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="site-header">
+
+    <div class="top-header">
+      <div class="container header-inner">
+
+        <a href="#" class="logo" aria-label="VimBuzz Home">
+          <span class="logo-vim">Vim</span><span class="logo-buzz">Buzz</span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Main navigation">
+          <a href="#home" class="active">Home</a>
+          <a href="#news">News</a>
+          <a href="#sports">Sports</a>
+          <a href="#entertainment">Entertainment</a>
+          <a href="#tech">Tech</a>
+          <a href="#lifestyle">Lifestyle</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="searchBtn" aria-label="Search">
+            🔍
+          </button>
+
+          <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+            ☰
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#home">Home</a>
+      <a href="#news">News</a>
+      <a href="#sports">Sports</a>
+      <a href="#entertainment">Entertainment</a>
+      <a href="#tech">Tech</a>
+      <a href="#lifestyle">Lifestyle</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+
+    <!-- Search -->
+    <div class="search-panel" id="searchPanel">
+      <div class="container">
+        <form id="searchForm" class="search-form">
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Search VimBuzz..."
+            autocomplete="off"
+          >
+          <button type="submit">Search</button>
+        </form>
+        <div id="searchResults" class="search-results"></div>
+      </div>
+    </div>
+
+  </header>
+
+
+  <!-- ================= TRENDING BAR ================= -->
+  <div class="trending-bar">
+    <div class="container trending-inner">
+
+      <span class="trending-label">
+        🔥 TRENDING
+      </span>
+
+      <div class="trending-list">
+        <a href="#">Ghana Premier League</a>
+        <a href="#">Transfer News</a>
+        <a href="#">Black Stars</a>
+        <a href="#">Ghana Music</a>
+        <a href="#">AI Tools</a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ================= MAIN ================= -->
+  <main id="home">
+
+    <!-- HERO -->
+    <section class="hero-section">
+      <div class="container">
+
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">WHAT'S HAPPENING</span>
+            <h1>Ghana's Trending Stories</h1>
+          </div>
+
+          <span class="live-badge">
+            ● LIVE
+          </span>
+        </div>
+
+
+        <div class="hero-grid">
+
+          <!-- Main Story -->
+          <article
+            class="hero-main article-card"
+            data-category="news"
+            data-title="Ghana's latest trending story"
+          >
+
+            <div class="article-image">
+              <img
+                src="https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?auto=format&fit=crop&w=1200&q=80"
+                alt="Ghana city skyline"
+              >
+
+              <span class="category-badge">NEWS</span>
+            </div>
+
+            <div class="hero-content">
+
+              <span class="article-time">
+                2 hours ago
+              </span>
+
+              <h2>
+                Ghana's latest stories making waves across the country
+              </h2>
+
+              <p>
+                Catch up on the biggest conversations, stories and developments
+                people are talking about today.
+              </p>
+
+              <a href="#" class="read-more">
+                Read Full Story →
+              </a>
+
+            </div>
+
+          </article>
+
+
+          <!-- Hero Side Stories -->
+          <div class="hero-side">
+
+            <article
+              class="small-article article-card"
+              data-category="sports"
+              data-title="Football transfer news"
+            >
+
+              <div class="small-image">
+                <img
+                  src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=700&q=80"
+                  alt="Football player"
+                >
+              </div>
+
+              <div class="small-content">
+
+                <span class="category-text sports">
+                  SPORTS
+                </span>
+
+                <h3>
+                  Latest football stories and transfer updates
+                </h3>
+
+                <span class="article-time">
+                  1 hour ago
+                </span>
+
+              </div>
+
+            </article>
+
+
+            <article
+              class="small-article article-card"
+              data-category="entertainment"
+              data-title="Ghana entertainment trends"
+            >
+
+              <div class="small-image">
+                <img
+                  src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=700&q=80"
+                  alt="Concert crowd"
+                >
+              </div>
+
+              <div class="small-content">
+
+                <span class="category-text entertainment">
+                  ENTERTAINMENT
+                </span>
+
+                <h3>
+                  Entertainment stories everyone is talking about
+                </h3>
+
+                <span class="article-time">
+                  3 hours ago
+                </span>
+
+              </div>
+
+            </article>
+
+
+            <article
+              class="small-article article-card"
+              data-category="tech"
+              data-title="Artificial intelligence technology"
+            >
+
+              <div class="small-image">
+                <img
+                  src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=700&q=80"
+                  alt="Artificial intelligence technology"
+                >
+              </div>
+
+              <div class="small-content">
+
+                <span class="category-text tech">
+                  TECH
+                </span>
+
+                <h3>
+                  New AI tools changing the way people work
+                </h3>
+
+                <span class="article-time">
+                  5 hours ago
+                </span>
+
+              </div>
+
+            </article>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ================= LATEST NEWS ================= -->
+    <section class="content-section" id="news">
+
+      <div class="container">
+
+        <div class="section-title-row">
+          <div>
+            <span class="eyebrow">STAY UPDATED</span>
+            <h2>Latest News</h2>
+          </div>
+
+          <a href="#" class="view-all">
+            View All →
+          </a>
+        </div>
+
+
+        <div class="news-layout">
+
+          <div class="articles-grid">
+
+            <article
+              class="news-card article-card"
+              data-category="news"
+              data-title="Major development making headlines"
+            >
+
+              <div class="card-image">
+                <img
+                  src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
+                  alt="News newspaper"
+                >
+              </div>
+
+              <div class="card-body">
+
+                <span class="category-text news">
+                  NEWS
+                </span>
+
+                <h3>
+                  Major development becomes one of today's biggest stories
+                </h3>
+
+                <p>
+                  Here's what you need to know about the latest development.
+                </p>
+
+                <div class="card-meta">
+                  <span>Today</span>
+                  <span>•</span>
+                  <span>4 min read</span>
+                </div>
+
+              </div>
+
+            </article>
+
+
+            <article
+              class="news-card article-card"
+              data-category="news"
+              data-title="Ghana business update"
+            >
+
+              <div class="card-image">
+                <img
+                  src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=800&q=80"
+                  alt="Business meeting"
+                >
+              </div>
+
+              <div class="card-body">
+
+                <span class="category-text news">
+                  BUSINESS
+                </span>
+
+                <h3>
+                  Business and economic stories to watch this week
+                </h3>
+
+                <p>
+                  Important developments affecting businesses and consumers.
+                </p>
+
+                <div class="card-meta">
+                  <span>Today</span>
+                  <span>•</span>
+                  <span>5 min read</span>
+                </div>
+
+              </div>
+
+            </article>
+
+
+            <article
+              class="news-card article-card"
+              data-category="news"
+              data-title="Community stories Ghana"
+            >
+
+              <div class="card-image">
+                <img
+                  src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80"
+                  alt="Community"
+                >
+              </div>
+
+              <div class="card-body">
+
+                <span class="category-text news">
+                  GHANA
+                </span>
+
+                <h3>
+                  Community stories gaining attention across Ghana
+                </h3>
+
+                <p>
+                  Discover the people and stories creating conversations.
+                </p>
+
+                <div class="card-meta">
+                  <span>Today</span>
+                  <span>•</span>
+                  <span>3 min read</span>
+                </div>
+
+              </div>
+
+            </article>
+
+
+            <article
+              class="news-card article-card"
+              data-category="news"
+              data-title="Trending Ghana story"
+            >
+
+              <div class="card-image">
+                <img
+                  src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"
+                  alt="Laptop"
+                >
+              </div>
+
+              <div class="card-body">
+
+                <span class="category-text news">
+                  TRENDING
+                </span>
+
+                <h3>
+                  This story is quickly becoming one of Ghana's top trends
+                </h3>
+
+                <p>
+                  See why thousands of people are talking about it.
+                </p>
+
+                <div class="card-meta">
+                  <span>Today</span>
+                  <span>•</span>
+                  <span>6 min read</span>
+                </div>
+
+              </div>
+
+            </article>
+
+          </div>
+
+
+          <!-- Sidebar -->
+          <aside class="sidebar">
+
+            <div class="sidebar-box">
+
+              <div class="sidebar-heading">
+                <h3>🔥 Most Read</h3>
+              </div>
+
+              <div class="most-read-list">
+
+                <a href="#" class="most-read-item">
+                  <span>01</span>
+                  <div>
+                    <h4>Top story everyone is discussing today</h4>
+                    <small>12.4K views</small>
+                  </div>
+                </a>
+
+                <a href="#" class="most-read-item">
+                  <span>02</span>
+                  <div>
+                    <h4>Latest football update</h4>
+                    <small>9.8K views</small>
+                  </div>
+                </a>
+
+                <a href="#" class="most-read-item">
+                  <span>03</span>
+                  <div>
+                    <h4>Entertainment news goes viral</h4>
+                    <small>8.2K views</small>
+                  </div>
+                </a>
+
+                <a href="#" class="most-read-item">
+                  <span>04</span>
+                  <div>
+                    <h4>New technology everyone wants</h4>
+                    <small>6.7K views</small>
+                  </div>
+                </a>
+
+              </div>
+
+            </div>
+
+
+            <div class="ad-box">
+              <span>ADVERTISEMENT</span>
+              <div class="ad-placeholder">
+                Your Ad Here
+              </div>
+            </div>
+
+          </aside>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= SPORTS ================= -->
+    <section class="category-section" id="sports">
+
+      <div class="container">
+
+        <div class="section-title-row">
+
+          <div>
+            <span class="eyebrow">GAME TIME</span>
+            <h2>⚽ Sports</h2>
+          </div>
+
+          <a href="#" class="view-all">
+            More Sports →
+          </a>
+
+        </div>
+
+
+        <div class="category-grid">
+
+          <article class="feature-card article-card">
+
+            <img
+              src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1000&q=80"
+              alt="Football match"
+            >
+
+            <div class="feature-overlay">
+
+              <span class="category-badge">
+                FOOTBALL
+              </span>
+
+              <h3>
+                Everything happening in Ghana football right now
+              </h3>
+
+              <span>
+                Read Story →
+              </span>
+
+            </div>
+
+          </article>
+
+
+          <div class="vertical-articles">
+
+            <article class="mini-card article-card">
+
+              <img
+                src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=500&q=80"
+                alt="Sports stadium"
+              >
+
+              <div>
+                <span class="category-text sports">
+                  SPORTS
+                </span>
+                <h3>Big sporting events to watch</h3>
+                <span class="article-time">2 hours ago</span>
+              </div>
+
+            </article>
+
+
+            <article class="mini-card article-card">
+
+              <img
+                src="https://images.unsplash.com/photo-1518604666860-9ed391f76460?auto=format&fit=crop&w=500&q=80"
+                alt="Running athlete"
+              >
+
+              <div>
+                <span class="category-text sports">
+                  SPORTS
+                </span>
+                <h3>Young Ghanaian athletes making headlines</h3>
+                <span class="article-time">4 hours ago</span>
+              </div>
+
+            </article>
+
+
+            <article class="mini-card article-card">
+
+              <img
+                src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=500&q=80"
+                alt="Basketball"
+              >
+
+              <div>
+                <span class="category-text sports">
+                  SPORTS
+                </span>
+                <h3>Weekend sports roundup</h3>
+                <span class="article-time">6 hours ago</span>
+              </div>
+
+            </article>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= ENTERTAINMENT ================= -->
+    <section class="content-section" id="entertainment">
+
+      <div class="container">
+
+        <div class="section-title-row">
+
+          <div>
+            <span class="eyebrow">SHOWBIZ</span>
+            <h2>🎵 Entertainment</h2>
+          </div>
+
+          <a href="#" class="view-all">
+            More Entertainment →
+          </a>
+
+        </div>
+
+
+        <div class="articles-grid entertainment-grid">
+
+          <article class="news-card article-card">
+
+            <div class="card-image">
+              <img
+                src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80"
+                alt="Music concert"
+              >
+            </div>
+
+            <div class="card-body">
+
+              <span class="category-text entertainment">
+                MUSIC
+              </span>
+
+              <h3>
+                Ghana music stories making waves
+              </h3>
+
+              <p>
+                The latest conversations from the music industry.
+              </p>
+
+              <div class="card-meta">
+                <span>Today</span>
+                <span>•</span>
+                <span>4 min read</span>
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="news-card article-card">
+
+            <div class="card-image">
+              <img
+                src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=800&q=80"
+                alt="Microphone"
+              >
+            </div>
+
+            <div class="card-body">
+
+              <span class="category-text entertainment">
+                CELEBRITY
+              </span>
+
+              <h3>
+                Celebrity stories trending online
+              </h3>
+
+              <p>
+                See what's happening in Ghana's entertainment scene.
+              </p>
+
+              <div class="card-meta">
+                <span>Today</span>
+                <span>•</span>
+                <span>3 min read</span>
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="news-card article-card">
+
+            <div class="card-image">
+              <img
+                src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80"
+                alt="Cinema"
+              >
+            </div>
+
+            <div class="card-body">
+
+              <span class="category-text entertainment">
+                MOVIES
+              </span>
+
+              <h3>
+                New movies and shows to watch
+              </h3>
+
+              <p>
+                Discover what's new in film and television.
+              </p>
+
+              <div class="card-meta">
+                <span>Yesterday</span>
+                <span>•</span>
+                <span>5 min read</span>
+              </div>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= TECH ================= -->
+    <section class="category-section tech-section" id="tech">
+
+      <div class="container">
+
+        <div class="section-title-row">
+
+          <div>
+            <span class="eyebrow">DIGITAL WORLD</span>
+            <h2>🤖 Technology</h2>
+          </div>
+
+          <a href="#" class="view-all">
+            More Tech →
+          </a>
+
+        </div>
+
+
+        <div class="tech-grid">
+
+          <article class="tech-feature article-card">
+
+            <img
+              src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1100&q=80"
+              alt="AI technology"
+            >
+
+            <div class="tech-content">
+
+              <span class="category-badge">
+                AI
+              </span>
+
+              <h3>
+                Artificial intelligence is changing how we work
+              </h3>
+
+              <p>
+                Explore the latest tools, trends and opportunities in AI.
+              </p>
+
+              <a href="#">
+                Read More →
+              </a>
+
+            </div>
+
+          </article>
+
+
+          <div class="tech-list">
+
+            <article class="tech-mini article-card">
+
+              <img
+                src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=500&q=80"
+                alt="Computer chip"
+              >
+
+              <div>
+                <span class="category-text tech">
+                  TECH
+                </span>
+                <h3>Technology trends to watch</h3>
+                <span class="article-time">Today</span>
+              </div>
+
+            </article>
+
+
+            <article class="tech-mini article-card">
+
+              <img
+                src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80"
+                alt="Gaming controller"
+              >
+
+              <div>
+                <span class="category-text tech">
+                  GAMING
+                </span>
+                <h3>Gaming news and releases</h3>
+                <span class="article-time">Yesterday</span>
+              </div>
+
+            </article>
+
+
+            <article class="tech-mini article-card">
+
+              <img
+                src="https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&w=500&q=80"
+                alt="Laptop technology"
+              >
+
+              <div>
+                <span class="category-text tech">
+                  DIGITAL
+                </span>
+                <h3>Useful digital tools for everyone</h3>
+                <span class="article-time">Yesterday</span>
+              </div>
+
+            </article>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= LIFESTYLE ================= -->
+    <section class="content-section" id="lifestyle">
+
+      <div class="container">
+
+        <div class="section-title-row">
+
+          <div>
+            <span class="eyebrow">EVERYDAY LIFE</span>
+            <h2>✨ Lifestyle</h2>
+          </div>
+
+          <a href="#" class="view-all">
+            More Lifestyle →
+          </a>
+
+        </div>
+
+
+        <div class="lifestyle-grid">
+
+          <article class="lifestyle-card article-card">
+
+            <img
+              src="https://images.unsplash.com/photo-1449247709967-d4461a6a6103?auto=format&fit=crop&w=800&q=80"
+              alt="Modern workspace"
+            >
+
+            <div>
+              <span class="category-text lifestyle">
+                CAREER
+              </span>
+              <h3>Career and productivity tips</h3>
+            </div>
+
+          </article>
+
+
+          <article class="lifestyle-card article-card">
+
+            <img
+              src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80"
+              alt="Food"
+            >
+
+            <div>
+              <span class="category-text lifestyle">
+                FOOD
+              </span>
+              <h3>Food, recipes and Ghanaian lifestyle</h3>
+            </div>
+
+          </article>
+
+
+          <article class="lifestyle-card article-card">
+
+            <img
+              src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80"
+              alt="Travel"
+            >
+
+            <div>
+              <span class="category-text lifestyle">
+                TRAVEL
+              </span>
+              <h3>Beautiful places to explore</h3>
+            </div>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= NEWSLETTER ================= -->
+    <section class="newsletter-section">
+
+      <div class="container">
+
+        <div class="newsletter">
+
+          <div class="newsletter-text">
+
+            <span class="eyebrow">
+              VIMBUZZ DAILY
+            </span>
+
+            <h2>
+              Get the biggest stories in your inbox.
+            </h2>
+
+            <p>
+              Subscribe for trending Ghana news, sports, entertainment
+              and technology updates.
+            </p>
+
+          </div>
+
+
+          <form class="newsletter-form" id="newsletterForm">
+
+            <input
+              type="email"
+              id="newsletterEmail"
+              placeholder="Enter your email address"
+              required
+            >
+
+            <button type="submit">
+              Subscribe
+            </button>
+
+            <small id="newsletterMessage"></small>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer" id="about">
+
+    <div class="container">
+
+      <div class="footer-grid">
+
+        <div class="footer-brand">
+
+          <a href="#" class="logo">
+            <span class="logo-vim">Vim</span><span class="logo-buzz">Buzz</span>
+          </a>
+
+          <p>
+            Ghana's home for trending stories, football,
+            entertainment, technology and lifestyle.
+          </p>
+
+          <div class="social-links">
+
+            <a href="#" aria-label="Facebook">f</a>
+            <a href="#" aria-label="X">𝕏</a>
+            <a href="#" aria-label="Instagram">◎</a>
+            <a href="#" aria-label="TikTok">♪</a>
+
+          </div>
+
+        </div>
+
+
+        <div class="footer-column">
+
+          <h3>Explore</h3>
+
+          <a href="#news">News</a>
+          <a href="#sports">Sports</a>
+          <a href="#entertainment">Entertainment</a>
+          <a href="#tech">Technology</a>
+          <a href="#lifestyle">Lifestyle</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+          <h3>Company</h3>
+
+          <a href="#about">About Us</a>
+          <a href="#">Advertise</a>
+          <a href="#">Write For Us</a>
+          <a href="#">Contact</a>
+
+        </div>
+
+
+        <div class="footer-column" id="contact">
+
+          <h3>Legal</h3>
+
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms & Conditions</a>
+          <a href="#">Cookie Policy</a>
+          <a href="#">Disclaimer</a>
+
+        </div>
+
+      </div>
+
+
+      <div class="footer-bottom">
+
+        <p>
+          © <span id="currentYear"></span> VimBuzz. All rights reserved.
+        </p>
+
+        <p>
+          Built with ❤️ in Ghana
+        </p>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- ================= SCROLL TOP ================= -->
+  <button
+    id="scrollTopBtn"
+    class="scroll-top"
+    aria-label="Scroll to top"
+  >
+    ↑
+  </button>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>

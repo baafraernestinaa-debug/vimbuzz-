@@ -1,1728 +1,1674 @@
 /* =========================================================
-   VIMBUZZ V2 — COMPLETE SCRIPT.JS
-   No backend • No database • No login
-   Uses LocalStorage
+   VIMBUZZ V2
+   Frontend-only News Website
+   No database • No API • LocalStorage
    ========================================================= */
 
 "use strict";
 
-/* =========================================================
+/* =========================
    STORAGE
-   ========================================================= */
+========================= */
 
 const STORAGE_KEY = "vimbuzz_articles_v2";
 const SUBSCRIBER_KEY = "vimbuzz_subscribers_v2";
 
-let articles = [];
-let currentArticleId = null;
-
-
-/* =========================================================
+/* =========================
    SAMPLE ARTICLES
-   ========================================================= */
+========================= */
 
-const defaultArticles = [
-  {
-    id: "vb-001",
-    title: "Ghana's Digital Future: How Technology Is Changing Everyday Life",
-    category: "Technology",
-    author: "VimBuzz",
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
-    excerpt:
-      "Technology continues to transform how Ghanaians work, communicate, learn and do business.",
-    content:
-      "Technology is becoming an important part of everyday life in Ghana.\n\nFrom mobile money and online businesses to digital education and artificial intelligence, more people are using technology to solve everyday problems.\n\nThe growth of digital services is also creating opportunities for young entrepreneurs and creators.",
-    featured: true,
-    trending: true,
-    views: 1280,
-    date: "2026-09-09T09:00:00"
-  },
-
-  {
-    id: "vb-002",
-    title: "Ghana Football: Fans Prepare for Another Exciting Weekend",
-    category: "Sports",
-    author: "VimBuzz Sports",
-    image:
-      "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1200&q=80",
-    excerpt:
-      "Football fans across Ghana are getting ready for another weekend of exciting matches.",
-    content:
-      "Football remains one of Ghana's biggest passions.\n\nFans are preparing for another exciting weekend as clubs compete for important points.\n\nSupporters are expected to fill stadiums and follow the action from home.",
-    featured: false,
-    trending: true,
-    views: 980,
-    date: "2026-09-08T15:00:00"
-  },
-
-  {
-    id: "vb-003",
-    title: "Ghanaian Entertainment Continues to Make Waves",
-    category: "Entertainment",
-    author: "VimBuzz",
-    image:
-      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80",
-    excerpt:
-      "Music, film and social media creators continue to influence Ghana's entertainment scene.",
-    content:
-      "Ghana's entertainment industry continues to grow.\n\nArtists, actors and digital creators are finding new ways to connect with audiences locally and internationally.\n\nSocial media has become an important platform for discovering new talent.",
-    featured: false,
-    trending: true,
-    views: 870,
-    date: "2026-09-08T11:00:00"
-  },
-
-  {
-    id: "vb-004",
-    title: "Simple Lifestyle Habits That Can Improve Your Day",
-    category: "Lifestyle",
-    author: "VimBuzz Lifestyle",
-    image:
-      "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80",
-    excerpt:
-      "Small daily habits can help improve productivity, organization and overall wellbeing.",
-    content:
-      "Building simple habits can make everyday life easier.\n\nPlanning your day, getting enough rest, staying organized and making time for learning are simple steps that can have a positive impact.\n\nConsistency is often more important than trying to change everything at once.",
-    featured: false,
-    trending: false,
-    views: 640,
-    date: "2026-09-07T14:00:00"
-  },
-
-  {
-    id: "vb-005",
-    title: "Business Opportunities for Young Entrepreneurs in Ghana",
-    category: "News",
-    author: "VimBuzz Business",
-    image:
-      "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80",
-    excerpt:
-      "Young entrepreneurs are exploring new opportunities through digital businesses and local services.",
-    content:
-      "Entrepreneurship continues to attract young people across Ghana.\n\nOnline stores, digital services, content creation and local service businesses are among the areas receiving attention.\n\nThe internet has lowered the barrier to starting many small businesses.",
-    featured: false,
-    trending: false,
-    views: 520,
-    date: "2026-09-07T09:30:00"
-  },
-
-  {
-    id: "vb-006",
-    title: "The Rise of Online Learning in Ghana",
-    category: "News",
-    author: "VimBuzz",
-    image:
-      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
-    excerpt:
-      "More learners are turning to online platforms to develop academic and professional skills.",
-    content:
-      "Online learning gives students and professionals access to educational resources from almost anywhere.\n\nCourses covering technology, business, languages and creative skills are becoming increasingly accessible.",
-    featured: false,
-    trending: false,
-    views: 450,
-    date: "2026-09-06T13:00:00"
-  }
+const DEFAULT_ARTICLES = [
+    {
+        id: "vb-001",
+        title: "Latest Ghana News Making Headlines Today",
+        category: "News",
+        author: "VimBuzz",
+        image: "https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?auto=format&fit=crop&w=1200&q=80",
+        excerpt: "Stay updated with the latest stories, developments and important news from Ghana.",
+        content: "Welcome to VimBuzz. This is your destination for the latest Ghana news, trending stories and important updates.",
+        featured: true,
+        trending: true,
+        views: 1250,
+        createdAt: "2026-09-09T08:00:00"
+    },
+    {
+        id: "vb-002",
+        title: "Ghana Football: Latest Updates and Stories",
+        category: "Sports",
+        author: "VimBuzz Sports",
+        image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1200&q=80",
+        excerpt: "Get the latest football news, results, transfers and stories from Ghana and around the world.",
+        content: "Football fans can follow the latest updates, results, transfer stories and major football developments on VimBuzz.",
+        featured: true,
+        trending: true,
+        views: 980,
+        createdAt: "2026-09-08T15:30:00"
+    },
+    {
+        id: "vb-003",
+        title: "Entertainment Stories Trending in Ghana",
+        category: "Entertainment",
+        author: "VimBuzz Entertainment",
+        image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80",
+        excerpt: "Discover trending entertainment, celebrity and showbiz stories from Ghana.",
+        content: "VimBuzz brings you entertainment news, celebrity updates, music stories and the latest happenings in Ghanaian showbiz.",
+        featured: true,
+        trending: true,
+        views: 870,
+        createdAt: "2026-09-08T12:00:00"
+    },
+    {
+        id: "vb-004",
+        title: "Technology: New Digital Trends to Know",
+        category: "Technology",
+        author: "VimBuzz Tech",
+        image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+        excerpt: "Explore technology news, apps, AI, smartphones and digital trends.",
+        content: "Technology continues to change rapidly. Follow VimBuzz for technology news, digital tools, artificial intelligence and innovation.",
+        featured: false,
+        trending: true,
+        views: 720,
+        createdAt: "2026-09-07T10:00:00"
+    },
+    {
+        id: "vb-005",
+        title: "Lifestyle: Ideas for Everyday Ghanaian Life",
+        category: "Lifestyle",
+        author: "VimBuzz Lifestyle",
+        image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=80",
+        excerpt: "Lifestyle stories, useful ideas, food, travel and everyday inspiration.",
+        content: "Explore lifestyle stories covering food, travel, fashion, relationships, personal development and everyday life.",
+        featured: false,
+        trending: false,
+        views: 650,
+        createdAt: "2026-09-06T09:00:00"
+    },
+    {
+        id: "vb-006",
+        title: "What Ghanaians Are Talking About Today",
+        category: "News",
+        author: "VimBuzz",
+        image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80",
+        excerpt: "Here are some of the stories and conversations currently getting attention.",
+        content: "VimBuzz brings together important stories and conversations happening across Ghana.",
+        featured: false,
+        trending: true,
+        views: 540,
+        createdAt: "2026-09-05T11:00:00"
+    }
 ];
 
-
-/* =========================================================
-   DOM
-   ========================================================= */
-
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => document.querySelectorAll(selector);
-
-
-/* =========================================================
-   INITIALIZATION
-   ========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadArticles();
-  setupNavigation();
-  setupSearch();
-  setupEditor();
-  setupModal();
-  setupNewsletter();
-  setupScrollTop();
-  setupCategoryButtons();
-  setupGlobalEvents();
-  renderAll();
-  updateYear();
-});
-
-
-/* =========================================================
-   LOAD / SAVE ARTICLES
-   ========================================================= */
-
-function loadArticles() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-
-    if (saved) {
-      const parsed = JSON.parse(saved);
-
-      if (Array.isArray(parsed)) {
-        articles = parsed;
-        return;
-      }
-    }
-  } catch (error) {
-    console.error("Could not load articles:", error);
-  }
-
-  articles = [...defaultArticles];
-  saveArticles();
-}
-
-
-function saveArticles() {
-  try {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(articles)
-    );
-  } catch (error) {
-    console.error("Could not save articles:", error);
-    showToast("Storage is full. Try deleting some articles.");
-  }
-}
-
-
-/* =========================================================
+/* =========================
    HELPERS
-   ========================================================= */
+========================= */
+
+function $(selector) {
+    return document.querySelector(selector);
+}
+
+function $all(selector) {
+    return document.querySelectorAll(selector);
+}
 
 function escapeHTML(value) {
-  if (value === null || value === undefined) {
-    return "";
-  }
-
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
+function getArticles() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
 
-function formatDate(dateString) {
-  const date = new Date(dateString);
+        if (!saved) {
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(DEFAULT_ARTICLES)
+            );
 
-  if (Number.isNaN(date.getTime())) {
-    return "Recently";
-  }
+            return [...DEFAULT_ARTICLES];
+        }
 
-  return date.toLocaleDateString("en-GH", {
-    day: "numeric",
-    month: "short",
-    year: "numeric"
-  });
+        const parsed = JSON.parse(saved);
+
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(DEFAULT_ARTICLES)
+            );
+
+            return [...DEFAULT_ARTICLES];
+        }
+
+        return parsed;
+    } catch (error) {
+        console.error("VimBuzz storage error:", error);
+        return [...DEFAULT_ARTICLES];
+    }
 }
 
-
-function formatViews(views) {
-  const number = Number(views) || 0;
-
-  if (number >= 1000000) {
-    return (number / 1000000).toFixed(1) + "M";
-  }
-
-  if (number >= 1000) {
-    return (number / 1000).toFixed(1) + "K";
-  }
-
-  return number.toString();
+function saveArticles(articles) {
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(articles)
+    );
 }
 
+function formatDate(date) {
+    if (!date) return "Recently";
+
+    const d = new Date(date);
+
+    if (isNaN(d.getTime())) return "Recently";
+
+    return d.toLocaleDateString("en-GH", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+    });
+}
+
+function formatViews(number) {
+    number = Number(number) || 0;
+
+    if (number >= 1000000) {
+        return (number / 1000000).toFixed(1) + "M";
+    }
+
+    if (number >= 1000) {
+        return (number / 1000).toFixed(1) + "K";
+    }
+
+    return number.toString();
+}
 
 function getArticle(id) {
-  return articles.find((article) => article.id === id);
+    return getArticles().find(
+        article => String(article.id) === String(id)
+    );
 }
 
-
-function sortNewest(list) {
-  return [...list].sort(
-    (a, b) =>
-      new Date(b.date).getTime() -
-      new Date(a.date).getTime()
-  );
+function sortNewest(articles) {
+    return [...articles].sort(
+        (a, b) =>
+            new Date(b.createdAt || 0) -
+            new Date(a.createdAt || 0)
+    );
 }
 
+/* =========================
+   IMAGE FALLBACK
+========================= */
 
-function fallbackImage() {
-  return "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80";
+const FALLBACK_IMAGE =
+    "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80";
+
+function imageHTML(article, className = "article-image") {
+    return `
+        <img
+            class="${className}"
+            src="${escapeHTML(article.image || FALLBACK_IMAGE)}"
+            alt="${escapeHTML(article.title)}"
+            loading="lazy"
+            onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+        >
+    `;
 }
 
+/* =========================
+   ARTICLE CARD
+========================= */
 
-/* =========================================================
-   RENDER EVERYTHING
-   ========================================================= */
+function articleCard(article) {
+    return `
+        <article
+            class="article-card"
+            data-article-id="${escapeHTML(article.id)}"
+            tabindex="0"
+        >
+            <div class="article-image-wrap">
+                ${imageHTML(article)}
+                <span class="category-tag">
+                    ${escapeHTML(article.category)}
+                </span>
+            </div>
 
-function renderAll() {
-  renderHero();
-  renderLatest();
-  renderMostRead();
-  renderCategory("Sports", "sportsArticles");
-  renderCategory("Entertainment", "entertainmentArticles");
-  renderCategory("Technology", "technologyArticles");
-  renderCategory("Lifestyle", "lifestyleArticles");
-  renderTrending();
-  renderAdminArticles();
-  updateArticleCount();
+            <div class="article-card-content">
+
+                <div class="article-meta">
+                    <span>${formatDate(article.createdAt)}</span>
+                    <span>•</span>
+                    <span>${formatViews(article.views)} views</span>
+                </div>
+
+                <h3>
+                    ${escapeHTML(article.title)}
+                </h3>
+
+                <p class="article-excerpt">
+                    ${escapeHTML(article.excerpt)}
+                </p>
+
+                <div class="card-footer">
+                    <span>
+                        ${escapeHTML(article.author || "VimBuzz")}
+                    </span>
+
+                    <span class="read-more">
+                        Read →
+                    </span>
+                </div>
+
+            </div>
+        </article>
+    `;
 }
 
-
-/* =========================================================
+/* =========================
    HERO
-   ========================================================= */
+========================= */
 
 function renderHero() {
-  const container = $("#heroGrid");
+    const container = $("#heroGrid");
 
-  if (!container) return;
+    if (!container) return;
 
-  let featured = articles.filter(
-    (article) => article.featured
-  );
+    const articles = sortNewest(getArticles());
 
-  featured = sortNewest(featured);
+    const featured =
+        articles.filter(a => a.featured).slice(0, 1);
 
-  if (!featured.length) {
-    featured = sortNewest(articles);
-  }
+    const main =
+        featured[0] ||
+        articles[0];
 
-  const heroArticles = featured.slice(0, 3);
+    const side =
+        articles
+            .filter(a => a.id !== main?.id)
+            .slice(0, 2);
 
-  if (!heroArticles.length) {
+    if (!main) {
+        container.innerHTML = "";
+        return;
+    }
+
     container.innerHTML = `
-      <div class="hero-main">
-        <div class="hero-content">
-          <h1>No articles yet</h1>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  const main = heroArticles[0];
-
-  const side = heroArticles.slice(1, 3);
-
-  container.innerHTML = `
-    <article
-      class="hero-main"
-      data-article-id="${escapeHTML(main.id)}"
-    >
-      <img
-        src="${escapeHTML(main.image || fallbackImage())}"
-        alt="${escapeHTML(main.title)}"
-        onerror="this.src='${fallbackImage()}'"
-      >
-
-      <div class="hero-overlay"></div>
-
-      <div class="hero-content">
-
-        <div class="article-meta">
-          <span class="category-tag">
-            ${escapeHTML(main.category)}
-          </span>
-
-          <span>
-            ${formatDate(main.date)}
-          </span>
-        </div>
-
-        <h1>
-          ${escapeHTML(main.title)}
-        </h1>
-
-      </div>
-    </article>
-
-    <div class="hero-side">
-
-      ${side
-        .map(
-          (article) => `
-          <article
-            class="hero-side-card"
-            data-article-id="${escapeHTML(article.id)}"
-          >
-
-            <img
-              src="${escapeHTML(article.image || fallbackImage())}"
-              alt="${escapeHTML(article.title)}"
-              onerror="this.src='${fallbackImage()}'"
-            >
+        <article
+            class="hero-main"
+            data-article-id="${escapeHTML(main.id)}"
+            tabindex="0"
+        >
+            ${imageHTML(main)}
 
             <div class="hero-overlay"></div>
 
             <div class="hero-content">
 
-              <div class="article-meta">
                 <span class="category-tag">
-                  ${escapeHTML(article.category)}
+                    ${escapeHTML(main.category)}
                 </span>
-              </div>
 
-              <h2>
-                ${escapeHTML(article.title)}
-              </h2>
+                <h1>
+                    ${escapeHTML(main.title)}
+                </h1>
+
+                <p>
+                    ${escapeHTML(main.excerpt)}
+                </p>
+
+                <div class="article-meta">
+                    <span>${formatDate(main.createdAt)}</span>
+                    <span>•</span>
+                    <span>${formatViews(main.views)} views</span>
+                </div>
 
             </div>
+        </article>
 
-          </article>
-        `
-        )
-        .join("")}
+        <div class="hero-side">
+            ${side.map(article => `
+                <article
+                    class="hero-side-card"
+                    data-article-id="${escapeHTML(article.id)}"
+                    tabindex="0"
+                >
+                    ${imageHTML(article)}
 
-    </div>
-  `;
+                    <div class="hero-side-card-content">
+                        <span class="category-tag">
+                            ${escapeHTML(article.category)}
+                        </span>
+
+                        <h3>
+                            ${escapeHTML(article.title)}
+                        </h3>
+
+                        <div class="article-meta">
+                            ${formatDate(article.createdAt)}
+                        </div>
+                    </div>
+                </article>
+            `).join("")}
+        </div>
+    `;
 }
 
-
-/* =========================================================
-   LATEST ARTICLES
-   ========================================================= */
+/* =========================
+   LATEST
+========================= */
 
 function renderLatest() {
-  const container = $("#latestArticles");
+    const container = $("#latestArticles");
 
-  if (!container) return;
+    if (!container) return;
 
-  const latest = sortNewest(articles).slice(0, 8);
+    const articles = sortNewest(getArticles())
+        .slice(0, 6);
 
-  container.innerHTML = latest.length
-    ? latest.map(articleCard).join("")
-    : emptyState("No articles available.");
+    if (!articles.length) {
+        container.innerHTML =
+            `<p class="empty-state">No articles available yet.</p>`;
+        return;
+    }
+
+    container.innerHTML =
+        articles.map(articleCard).join("");
 }
 
-
-/* =========================================================
+/* =========================
    CATEGORY
-   ========================================================= */
+========================= */
 
 function renderCategory(category, elementId) {
-  const container = document.getElementById(elementId);
+    const container = $("#" + elementId);
 
-  if (!container) return;
+    if (!container) return;
 
-  const categoryArticles = sortNewest(
-    articles.filter(
-      (article) => article.category === category
-    )
-  ).slice(0, 4);
+    const articles = sortNewest(getArticles())
+        .filter(article =>
+            article.category.toLowerCase() ===
+            category.toLowerCase()
+        )
+        .slice(0, 4);
 
-  container.innerHTML = categoryArticles.length
-    ? categoryArticles.map(articleCard).join("")
-    : emptyState(`No ${category} articles yet.`);
+    if (!articles.length) {
+        container.innerHTML = `
+            <div class="empty-state">
+                No ${escapeHTML(category)} articles yet.
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML =
+        articles.map(articleCard).join("");
 }
 
-
-/* =========================================================
-   ARTICLE CARD
-   ========================================================= */
-
-function articleCard(article) {
-  return `
-    <article
-      class="article-card"
-      data-article-id="${escapeHTML(article.id)}"
-    >
-
-      <div class="article-image">
-
-        <img
-          src="${escapeHTML(article.image || fallbackImage())}"
-          alt="${escapeHTML(article.title)}"
-          loading="lazy"
-          onerror="this.src='${fallbackImage()}'"
-        >
-
-      </div>
-
-      <div class="article-card-content">
-
-        <div class="article-meta">
-
-          <span class="category-tag">
-            ${escapeHTML(article.category)}
-          </span>
-
-          <span>
-            ${formatDate(article.date)}
-          </span>
-
-        </div>
-
-        <h3>
-          ${escapeHTML(article.title)}
-        </h3>
-
-        <p class="article-excerpt">
-          ${escapeHTML(article.excerpt)}
-        </p>
-
-        <div class="card-footer">
-
-          <span>
-            By ${escapeHTML(article.author || "VimBuzz")}
-          </span>
-
-          <span>
-            👁 ${formatViews(article.views)}
-          </span>
-
-        </div>
-
-      </div>
-
-    </article>
-  `;
-}
-
-
-function emptyState(message) {
-  return `
-    <div style="
-      grid-column: 1 / -1;
-      padding: 30px;
-      text-align: center;
-      color: #6b7280;
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid #e5e7eb;
-    ">
-      ${escapeHTML(message)}
-    </div>
-  `;
-}
-
-
-/* =========================================================
+/* =========================
    MOST READ
-   ========================================================= */
+========================= */
 
 function renderMostRead() {
-  const container = $("#mostRead");
+    const container = $("#mostRead");
 
-  if (!container) return;
+    if (!container) return;
 
-  const mostRead = [...articles]
-    .sort(
-      (a, b) =>
-        (Number(b.views) || 0) -
-        (Number(a.views) || 0)
-    )
-    .slice(0, 6);
-
-  container.innerHTML = mostRead.length
-    ? mostRead
-        .map(
-          (article, index) => `
-          <article
-            class="most-read-item"
-            data-article-id="${escapeHTML(article.id)}"
-          >
-
-            <div class="most-read-number">
-              ${String(index + 1).padStart(2, "0")}
-            </div>
-
-            <div>
-              <h3>
-                ${escapeHTML(article.title)}
-              </h3>
-
-              <small>
-                ${formatViews(article.views)} views
-                • ${escapeHTML(article.category)}
-              </small>
-            </div>
-
-          </article>
-        `
+    const articles = [...getArticles()]
+        .sort(
+            (a, b) =>
+                (Number(b.views) || 0) -
+                (Number(a.views) || 0)
         )
-        .join("")
-    : emptyState("No articles available.");
+        .slice(0, 5);
+
+    if (!articles.length) {
+        container.innerHTML =
+            `<p class="empty-state">No popular articles yet.</p>`;
+        return;
+    }
+
+    container.innerHTML = articles
+        .map((article, index) => `
+            <article
+                class="most-read-item"
+                data-article-id="${escapeHTML(article.id)}"
+                tabindex="0"
+            >
+                <span class="most-read-number">
+                    ${String(index + 1).padStart(2, "0")}
+                </span>
+
+                <div>
+                    <span class="category-tag">
+                        ${escapeHTML(article.category)}
+                    </span>
+
+                    <h3>
+                        ${escapeHTML(article.title)}
+                    </h3>
+
+                    <div class="article-meta">
+                        ${formatViews(article.views)} views
+                    </div>
+                </div>
+            </article>
+        `)
+        .join("");
 }
 
-
-/* =========================================================
+/* =========================
    TRENDING
-   ========================================================= */
+========================= */
 
 function renderTrending() {
-  const container = $("#trendingList");
+    const container = $("#trendingList");
 
-  if (!container) return;
+    if (!container) return;
 
-  let trending = articles.filter(
-    (article) => article.trending
-  );
+    let articles = getArticles()
+        .filter(article => article.trending);
 
-  trending = sortNewest(trending).slice(0, 8);
+    if (!articles.length) {
+        articles = [...getArticles()]
+            .sort(
+                (a, b) =>
+                    (Number(b.views) || 0) -
+                    (Number(a.views) || 0)
+            );
+    }
 
-  if (!trending.length) {
-    trending = sortNewest(articles).slice(0, 5);
-  }
+    articles = articles.slice(0, 8);
 
-  container.innerHTML = trending
-    .map(
-      (article) => `
-      <a
-        href="#"
-        data-article-id="${escapeHTML(article.id)}"
-      >
-        ${escapeHTML(article.title)}
-      </a>
-    `
-    )
-    .join("");
+    container.innerHTML = articles
+        .map(article => `
+            <button
+                class="trending-item"
+                type="button"
+                data-article-id="${escapeHTML(article.id)}"
+            >
+                ${escapeHTML(article.title)}
+            </button>
+        `)
+        .join("");
 }
 
+/* =========================
+   RENDER EVERYTHING
+========================= */
 
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
-function setupNavigation() {
-  const menuToggle = $("#menuToggle");
-  const mobileNav = $("#mobileNav");
-
-  if (menuToggle && mobileNav) {
-    menuToggle.addEventListener("click", () => {
-      mobileNav.classList.toggle("open");
-
-      menuToggle.textContent =
-        mobileNav.classList.contains("open")
-          ? "✕"
-          : "☰";
-    });
-  }
-
-  $$("#mobileNav a").forEach((link) => {
-    link.addEventListener("click", () => {
-      mobileNav?.classList.remove("open");
-
-      if (menuToggle) {
-        menuToggle.textContent = "☰";
-      }
-    });
-  });
-
-  $$(".nav-link").forEach((link) => {
-    link.addEventListener("click", () => {
-      $$(".nav-link").forEach((item) =>
-        item.classList.remove("active")
-      );
-
-      link.classList.add("active");
-    });
-  });
+function renderAll() {
+    renderHero();
+    renderLatest();
+    renderMostRead();
+    renderCategory("Sports", "sportsArticles");
+    renderCategory("Entertainment", "entertainmentArticles");
+    renderCategory("Technology", "technologyArticles");
+    renderCategory("Lifestyle", "lifestyleArticles");
+    renderTrending();
+    renderAdminArticles();
 }
 
+/* =========================
+   MOBILE MENU
+========================= */
 
-/* =========================================================
+function setupMobileMenu() {
+    const menuButton = $("#menuBtn");
+    const mobileNav = $("#mobileNav");
+
+    if (!menuButton || !mobileNav) return;
+
+    menuButton.addEventListener("click", () => {
+        mobileNav.classList.toggle("open");
+        menuButton.classList.toggle("active");
+    });
+
+    $all("#mobileNav a").forEach(link => {
+        link.addEventListener("click", () => {
+            mobileNav.classList.remove("open");
+            menuButton.classList.remove("active");
+        });
+    });
+}
+
+/* =========================
    SEARCH
-   ========================================================= */
+========================= */
 
 function setupSearch() {
-  const searchToggle = $("#searchToggle");
-  const searchBox = $("#searchBox");
-  const searchForm = $("#searchForm");
-  const searchInput = $("#searchInput");
-  const clearSearch = $("#clearSearch");
+    const searchButton = $("#searchBtn");
+    const searchBox = $("#searchBox");
+    const searchForm = $("#searchForm");
+    const searchInput = $("#searchInput");
+    const clearButton = $("#clearSearch");
 
-  searchToggle?.addEventListener("click", () => {
-    searchBox?.classList.toggle("open");
+    if (searchButton && searchBox) {
+        searchButton.addEventListener("click", () => {
+            searchBox.classList.toggle("open");
 
-    if (searchBox?.classList.contains("open")) {
-      setTimeout(() => searchInput?.focus(), 100);
-    }
-  });
-
-  searchForm?.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const query = searchInput.value.trim().toLowerCase();
-
-    if (!query) {
-      showToast("Enter something to search.");
-      return;
+            if (searchBox.classList.contains("open")) {
+                setTimeout(() => {
+                    searchInput?.focus();
+                }, 100);
+            }
+        });
     }
 
-    performSearch(query);
-  });
+    if (searchForm && searchInput) {
+        searchForm.addEventListener("submit", event => {
+            event.preventDefault();
 
-  clearSearch?.addEventListener("click", () => {
-    searchInput.value = "";
+            performSearch(searchInput.value.trim());
+        });
+    }
 
-    $("#searchResultsSection")?.classList.add("hidden");
+    if (clearButton) {
+        clearButton.addEventListener("click", () => {
+            if (searchInput) {
+                searchInput.value = "";
+            }
 
-    window.location.hash = "home";
-  });
+            performSearch("");
+        });
+    }
 }
-
 
 function performSearch(query) {
-  const results = articles.filter((article) => {
-    const searchable = `
-      ${article.title}
-      ${article.category}
-      ${article.author}
-      ${article.excerpt}
-      ${article.content}
-    `.toLowerCase();
+    const section = $("#searchResultsSection");
+    const container = $("#searchResults");
 
-    return searchable.includes(query);
-  });
+    if (!section || !container) return;
 
-  const container = $("#searchResults");
+    query = query.toLowerCase().trim();
 
-  if (!container) return;
-
-  container.innerHTML = results.length
-    ? results.map(articleCard).join("")
-    : emptyState(`No results found for "${query}".`);
-
-  $("#searchResultsSection")?.classList.remove("hidden");
-
-  $("#searchResultsSection")?.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-}
-
-
-/* =========================================================
-   CATEGORY BUTTONS
-   ========================================================= */
-
-function setupCategoryButtons() {
-  $$(".category-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      const category = button.dataset.category;
-
-      if (!category) return;
-
-      const matching = articles.filter(
-        (article) => article.category === category
-      );
-
-      if (!matching.length) {
-        showToast(`No ${category} articles yet.`);
+    if (!query) {
+        section.style.display = "none";
         return;
-      }
+    }
 
-      const query =
-        `#${category.toLowerCase()}`;
+    const results = getArticles().filter(article => {
+        const text = `
+            ${article.title}
+            ${article.category}
+            ${article.author}
+            ${article.excerpt}
+            ${article.content}
+        `.toLowerCase();
 
-      const section = document.querySelector(query);
-
-      section?.scrollIntoView({
-        behavior: "smooth"
-      });
+        return text.includes(query);
     });
-  });
-}
 
+    section.style.display = "block";
 
-/* =========================================================
-   EDITOR
-   ========================================================= */
-
-function setupEditor() {
-  const newArticleBtn = $("#newArticleBtn");
-  const closeEditorBtn = $("#closeEditorBtn");
-  const cancelEditorBtn = $("#cancelEditorBtn");
-  const articleForm = $("#articleForm");
-
-  newArticleBtn?.addEventListener("click", () => {
-    openNewArticleEditor();
-  });
-
-  closeEditorBtn?.addEventListener("click", closeEditor);
-  cancelEditorBtn?.addEventListener("click", closeEditor);
-
-  articleForm?.addEventListener("submit", saveArticleFromForm);
-}
-
-
-function openNewArticleEditor() {
-  const editor = $("#articleEditor");
-
-  if (!editor) return;
-
-  currentArticleId = null;
-
-  $("#editorTitle").textContent = "Create Article";
-
-  $("#articleId").value = "";
-  $("#articleTitle").value = "";
-  $("#articleCategory").value = "News";
-  $("#articleAuthor").value = "VimBuzz";
-  $("#articleImage").value = "";
-  $("#articleExcerpt").value = "";
-  $("#articleContent").value = "";
-  $("#articleFeatured").checked = false;
-  $("#articleTrending").checked = false;
-
-  editor.classList.remove("hidden");
-
-  editor.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-
-  $("#articleTitle")?.focus();
-}
-
-
-function openEditArticle(id) {
-  const article = getArticle(id);
-
-  if (!article) {
-    showToast("Article not found.");
-    return;
-  }
-
-  currentArticleId = id;
-
-  $("#editorTitle").textContent = "Edit Article";
-
-  $("#articleId").value = article.id;
-  $("#articleTitle").value = article.title || "";
-  $("#articleCategory").value =
-    article.category || "News";
-  $("#articleAuthor").value =
-    article.author || "VimBuzz";
-  $("#articleImage").value =
-    article.image || "";
-  $("#articleExcerpt").value =
-    article.excerpt || "";
-  $("#articleContent").value =
-    article.content || "";
-  $("#articleFeatured").checked =
-    Boolean(article.featured);
-  $("#articleTrending").checked =
-    Boolean(article.trending);
-
-  $("#articleEditor")?.classList.remove("hidden");
-
-  $("#articleEditor")?.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-
-  $("#articleTitle")?.focus();
-}
-
-
-function closeEditor() {
-  $("#articleEditor")?.classList.add("hidden");
-
-  currentArticleId = null;
-}
-
-
-function saveArticleFromForm(event) {
-  event.preventDefault();
-
-  const title = $("#articleTitle").value.trim();
-  const category = $("#articleCategory").value;
-  const author =
-    $("#articleAuthor").value.trim() || "VimBuzz";
-  const image = $("#articleImage").value.trim();
-  const excerpt = $("#articleExcerpt").value.trim();
-  const content = $("#articleContent").value.trim();
-  const featured = $("#articleFeatured").checked;
-  const trending = $("#articleTrending").checked;
-
-  if (!title || !excerpt || !content) {
-    showToast("Please complete all required fields.");
-    return;
-  }
-
-  if (currentArticleId) {
-    const index = articles.findIndex(
-      (article) =>
-        article.id === currentArticleId
-    );
-
-    if (index === -1) {
-      showToast("Article could not be found.");
-      return;
+    if (!results.length) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>No results found</h3>
+                <p>Try another search.</p>
+            </div>
+        `;
+        return;
     }
 
-    articles[index] = {
-      ...articles[index],
-      title,
-      category,
-      author,
-      image: image || fallbackImage(),
-      excerpt,
-      content,
-      featured,
-      trending
-    };
-
-    showToast("Article updated successfully.");
-  } else {
-    const newArticle = {
-      id:
-        "vb-" +
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2, 8),
-
-      title,
-      category,
-      author,
-      image: image || fallbackImage(),
-      excerpt,
-      content,
-      featured,
-      trending,
-      views: 0,
-      date: new Date().toISOString()
-    };
-
-    articles.unshift(newArticle);
-
-    showToast("Article published successfully.");
-  }
-
-  saveArticles();
-  closeEditor();
-  renderAll();
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-}
-
-
-/* =========================================================
-   ADMIN ARTICLE LIST
-   ========================================================= */
-
-function renderAdminArticles() {
-  const container = $("#adminArticlesList");
-
-  if (!container) return;
-
-  const sorted = sortNewest(articles);
-
-  if (!sorted.length) {
     container.innerHTML =
-      emptyState("No articles available.");
-    return;
-  }
+        sortNewest(results)
+            .map(articleCard)
+            .join("");
 
-  container.innerHTML = sorted
-    .map(
-      (article) => `
-      <div class="admin-article">
-
-        <div class="admin-article-image">
-
-          <img
-            src="${escapeHTML(article.image || fallbackImage())}"
-            alt=""
-            onerror="this.src='${fallbackImage()}'"
-          >
-
-        </div>
-
-        <div class="admin-article-info">
-
-          <h4>
-            ${escapeHTML(article.title)}
-          </h4>
-
-          <small>
-            ${escapeHTML(article.category)}
-            • ${formatDate(article.date)}
-            • ${formatViews(article.views)} views
-          </small>
-
-        </div>
-
-        <div class="admin-actions">
-
-          <button
-            class="admin-action-btn"
-            data-edit-id="${escapeHTML(article.id)}"
-            title="Edit article"
-          >
-            ✏️
-          </button>
-
-          <button
-            class="admin-action-btn admin-delete"
-            data-delete-id="${escapeHTML(article.id)}"
-            title="Delete article"
-          >
-            🗑️
-          </button>
-
-        </div>
-
-      </div>
-    `
-    )
-    .join("");
+    section.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 }
 
-
-function updateArticleCount() {
-  const counter = $("#articleCount");
-
-  if (!counter) return;
-
-  counter.textContent =
-    `${articles.length} article${articles.length === 1 ? "" : "s"}`;
-}
-
-
-/* =========================================================
-   DELETE ARTICLE
-   ========================================================= */
-
-function deleteArticle(id) {
-  const article = getArticle(id);
-
-  if (!article) return;
-
-  const confirmed = window.confirm(
-    `Delete "${article.title}"?`
-  );
-
-  if (!confirmed) return;
-
-  articles = articles.filter(
-    (item) => item.id !== id
-  );
-
-  saveArticles();
-  renderAll();
-
-  showToast("Article deleted.");
-}
-
-
-/* =========================================================
+/* =========================
    ARTICLE MODAL
-   ========================================================= */
-
-function setupModal() {
-  const modal = $("#articleModal");
-  const overlay = $("#modalOverlay");
-  const closeModal = $("#closeModal");
-
-  overlay?.addEventListener("click", closeArticleModal);
-  closeModal?.addEventListener("click", closeArticleModal);
-
-  document.addEventListener("keydown", (event) => {
-    if (
-      event.key === "Escape" &&
-      modal?.classList.contains("open")
-    ) {
-      closeArticleModal();
-    }
-  });
-
-  $("#shareWhatsApp")?.addEventListener(
-    "click",
-    shareWhatsApp
-  );
-
-  $("#shareFacebook")?.addEventListener(
-    "click",
-    shareFacebook
-  );
-
-  $("#shareNative")?.addEventListener(
-    "click",
-    shareNative
-  );
-}
-
+========================= */
 
 function openArticle(id) {
-  const article = getArticle(id);
+    const article = getArticle(id);
 
-  if (!article) return;
+    if (!article) return;
 
-  /*
-    Count a view each time an article is opened.
-  */
-  article.views =
-    (Number(article.views) || 0) + 1;
+    /* Increase views */
+    const articles = getArticles();
 
-  saveArticles();
+    const index = articles.findIndex(
+        a => String(a.id) === String(id)
+    );
 
-  $("#modalCategory").textContent =
-    article.category || "News";
+    if (index !== -1) {
+        articles[index].views =
+            (Number(articles[index].views) || 0) + 1;
 
-  $("#modalDate").textContent =
-    formatDate(article.date);
+        saveArticles(articles);
 
-  $("#modalTitle").textContent =
-    article.title;
+        article.views = articles[index].views;
+    }
 
-  $("#modalAuthor").textContent =
-    article.author || "VimBuzz";
+    const modal = $("#articleModal");
 
-  $("#modalExcerpt").textContent =
-    article.excerpt || "";
+    if (!modal) return;
 
-  $("#modalBody").textContent =
-    article.content || "";
+    const modalImage = $("#modalImage");
+    const modalCategory = $("#modalCategory");
+    const modalDate = $("#modalDate");
+    const modalTitle = $("#modalTitle");
+    const modalAuthor = $("#modalAuthor");
+    const modalExcerpt = $("#modalExcerpt");
+    const modalBody = $("#modalBody");
 
-  const image = $("#modalImage");
+    if (modalImage) {
+        modalImage.src =
+            article.image || FALLBACK_IMAGE;
 
-  image.src =
-    article.image || fallbackImage();
+        modalImage.alt = article.title;
 
-  image.alt = article.title;
+        modalImage.onerror = function () {
+            this.onerror = null;
+            this.src = FALLBACK_IMAGE;
+        };
+    }
 
-  image.onerror = () => {
-    image.src = fallbackImage();
-  };
+    if (modalCategory) {
+        modalCategory.textContent =
+            article.category;
+    }
 
-  currentArticleId = article.id;
+    if (modalDate) {
+        modalDate.textContent =
+            `${formatDate(article.createdAt)} • ${formatViews(article.views)} views`;
+    }
 
-  $("#articleModal")?.classList.add("open");
-  $("#articleModal")?.setAttribute(
-    "aria-hidden",
-    "false"
-  );
+    if (modalTitle) {
+        modalTitle.textContent =
+            article.title;
+    }
 
-  document.body.classList.add("modal-open");
+    if (modalAuthor) {
+        modalAuthor.textContent =
+            `By ${article.author || "VimBuzz"}`;
+    }
 
-  renderMostRead();
-  renderLatest();
-  renderCategory("Sports", "sportsArticles");
-  renderCategory(
-    "Entertainment",
-    "entertainmentArticles"
-  );
-  renderCategory(
-    "Technology",
-    "technologyArticles"
-  );
-  renderCategory(
-    "Lifestyle",
-    "lifestyleArticles"
-  );
-  renderAdminArticles();
+    if (modalExcerpt) {
+        modalExcerpt.textContent =
+            article.excerpt || "";
+    }
+
+    if (modalBody) {
+        modalBody.textContent =
+            article.content || article.excerpt || "";
+    }
+
+    modal.dataset.currentArticle =
+        article.id;
+
+    modal.classList.add("open");
+    document.body.classList.add("modal-open");
+
+    renderMostRead();
 }
 
+function closeArticle() {
+    const modal = $("#articleModal");
 
-function closeArticleModal() {
-  $("#articleModal")?.classList.remove("open");
-  $("#articleModal")?.setAttribute(
-    "aria-hidden",
-    "true"
-  );
+    if (!modal) return;
 
-  document.body.classList.remove("modal-open");
+    modal.classList.remove("open");
+    document.body.classList.remove("modal-open");
+
+    delete modal.dataset.currentArticle;
 }
 
-
-/* =========================================================
+/* =========================
    SHARING
-   ========================================================= */
+========================= */
 
-function getShareData() {
-  const article = getArticle(currentArticleId);
+function getShareURL() {
+    const modal = $("#articleModal");
 
-  if (!article) return null;
+    const id =
+        modal?.dataset.currentArticle;
 
-  return {
-    title: article.title,
-    url:
-      window.location.origin +
-      window.location.pathname +
-      "?article=" +
-      encodeURIComponent(article.id)
-  };
+    if (!id) {
+        return window.location.href;
+    }
+
+    return `${window.location.origin}${window.location.pathname}?article=${encodeURIComponent(id)}`;
 }
 
-
-function shareWhatsApp() {
-  const data = getShareData();
-
-  if (!data) return;
-
-  const text =
-    `${data.title}\n\nRead it on VimBuzz:\n${data.url}`;
-
-  const url =
-    "https://wa.me/?text=" +
-    encodeURIComponent(text);
-
-  window.open(url, "_blank");
-}
-
-
-function shareFacebook() {
-  const data = getShareData();
-
-  if (!data) return;
-
-  const url =
-    "https://www.facebook.com/sharer/sharer.php?u=" +
-    encodeURIComponent(data.url);
-
-  window.open(
-    url,
-    "_blank",
-    "width=600,height=500"
-  );
-}
-
-
-async function shareNative() {
-  const data = getShareData();
-
-  if (!data) return;
-
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: data.title,
-        text: "Read this story on VimBuzz.",
-        url: data.url
-      });
-
-      return;
-    } catch (error) {
-      if (error.name === "AbortError") {
-        return;
-      }
-    }
-  }
-
-  try {
-    await navigator.clipboard.writeText(
-      data.url
-    );
-
-    showToast("Article link copied.");
-  } catch (error) {
-    window.prompt(
-      "Copy this article link:",
-      data.url
-    );
-  }
-}
-
-
-/* =========================================================
-   NEWSLETTER
-   ========================================================= */
-
-function setupNewsletter() {
-  const form = $("#newsletterForm");
-
-  form?.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const email = $("#newsletterEmail")
-      .value
-      .trim()
-      .toLowerCase();
-
-    if (!email) return;
-
-    let subscribers = [];
-
-    try {
-      subscribers =
-        JSON.parse(
-          localStorage.getItem(
-            SUBSCRIBER_KEY
-          )
-        ) || [];
-    } catch {
-      subscribers = [];
-    }
-
-    if (subscribers.includes(email)) {
-      $("#newsletterMessage").textContent =
-        "You're already subscribed.";
-      return;
-    }
-
-    subscribers.push(email);
-
-    localStorage.setItem(
-      SUBSCRIBER_KEY,
-      JSON.stringify(subscribers)
-    );
-
-    $("#newsletterEmail").value = "";
-
-    $("#newsletterMessage").textContent =
-      "You're subscribed! 🎉";
-
-    showToast("Subscription saved.");
-  });
-}
-
-
-/* =========================================================
-   SCROLL TOP
-   ========================================================= */
-
-function setupScrollTop() {
-  const button = $("#scrollTop");
-
-  if (!button) return;
-
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 450) {
-      button.classList.add("show");
-    } else {
-      button.classList.remove("show");
-    }
-  });
-
-  button.addEventListener("click", () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  });
-}
-
-
-/* =========================================================
-   GLOBAL EVENTS
-   ========================================================= */
-
-function setupGlobalEvents() {
-
-  document.addEventListener("click", (event) => {
-
-    /*
-      Article cards / hero cards
-    */
-    const articleElement =
-      event.target.closest(
-        "[data-article-id]"
-      );
-
-    if (articleElement) {
-
-      const articleId =
-        articleElement.dataset.articleId;
-
-      /*
-        Admin edit
-      */
-      if (
-        articleElement.hasAttribute(
-          "data-edit-id"
-        )
-      ) {
-        event.preventDefault();
-
-        openEditArticle(
-          articleElement.dataset.editId
-        );
-
-        return;
-      }
-
-      /*
-        Admin delete
-      */
-      if (
-        articleElement.hasAttribute(
-          "data-delete-id"
-        )
-      ) {
-        event.preventDefault();
-
-        deleteArticle(
-          articleElement.dataset.deleteId
-        );
-
-        return;
-      }
-
-      /*
-        Trending links
-      */
-      if (
-        articleElement.tagName === "A" &&
-        articleElement.dataset.articleId
-      ) {
-        event.preventDefault();
-
-        openArticle(articleId);
-
-        return;
-      }
-
-      /*
-        Regular article
-      */
-      openArticle(articleId);
-    }
-
-    /*
-      Admin edit button
-    */
-    const editButton =
-      event.target.closest(
-        "[data-edit-id]"
-      );
-
-    if (editButton) {
-      event.preventDefault();
-
-      openEditArticle(
-        editButton.dataset.editId
-      );
-
-      return;
-    }
-
-    /*
-      Admin delete button
-    */
-    const deleteButton =
-      event.target.closest(
-        "[data-delete-id]"
-      );
-
-    if (deleteButton) {
-      event.preventDefault();
-
-      deleteArticle(
-        deleteButton.dataset.deleteId
-      );
-
-      return;
-    }
-
-  });
-
-
-  /*
-    Active nav based on scrolling
-  */
-  const sections = $$(
-    "main section[id]"
-  );
-
-  const observer =
-    new IntersectionObserver(
-      (entries) => {
-
-        entries.forEach((entry) => {
-
-          if (!entry.isIntersecting) {
-            return;
-          }
-
-          const id = entry.target.id;
-
-          $$(".nav-link").forEach((link) => {
-
-            const href =
-              link.getAttribute("href");
-
-            link.classList.toggle(
-              "active",
-              href === `#${id}`
+function setupSharing() {
+    const whatsapp = $("#shareWhatsApp");
+    const facebook = $("#shareFacebook");
+    const native = $("#shareNative");
+
+    if (whatsapp) {
+        whatsapp.addEventListener("click", () => {
+            const modal = $("#articleModal");
+            const article = getArticle(
+                modal?.dataset.currentArticle
             );
 
-          });
+            if (!article) return;
 
+            const text =
+                `${article.title}\n\nRead more on VimBuzz`;
+
+            const url =
+                `https://wa.me/?text=${encodeURIComponent(
+                    text + "\n" + getShareURL()
+                )}`;
+
+            window.open(url, "_blank");
         });
+    }
 
-      },
-      {
-        threshold: 0.2
-      }
+    if (facebook) {
+        facebook.addEventListener("click", () => {
+            const url =
+                `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                    getShareURL()
+                )}`;
+
+            window.open(
+                url,
+                "_blank",
+                "width=600,height=500"
+            );
+        });
+    }
+
+    if (native) {
+        native.addEventListener("click", async () => {
+            const modal = $("#articleModal");
+
+            const article = getArticle(
+                modal?.dataset.currentArticle
+            );
+
+            if (!article) return;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: article.title,
+                        text: article.excerpt,
+                        url: getShareURL()
+                    });
+                } catch (error) {
+                    console.log("Share cancelled.");
+                }
+            } else {
+                try {
+                    await navigator.clipboard.writeText(
+                        getShareURL()
+                    );
+
+                    showToast(
+                        "Article link copied!"
+                    );
+                } catch {
+                    showToast(
+                        "Sharing is not supported on this browser."
+                    );
+                }
+            }
+        });
+    }
+}
+
+/* =========================
+   EDITOR
+========================= */
+
+function openEditor(article = null) {
+    const editor = $("#articleEditor");
+
+    if (!editor) return;
+
+    editor.style.display = "block";
+
+    const form = $("#articleForm");
+
+    if (!form) return;
+
+    if (article) {
+        $("#editorTitle").textContent =
+            "Edit Article";
+
+        $("#articleId").value =
+            article.id;
+
+        $("#articleTitle").value =
+            article.title || "";
+
+        $("#articleCategory").value =
+            article.category || "News";
+
+        $("#articleAuthor").value =
+            article.author || "";
+
+        $("#articleImage").value =
+            article.image || "";
+
+        $("#articleExcerpt").value =
+            article.excerpt || "";
+
+        $("#articleContent").value =
+            article.content || "";
+
+        $("#articleFeatured").checked =
+            !!article.featured;
+
+        $("#articleTrending").checked =
+            !!article.trending;
+    } else {
+        $("#editorTitle").textContent =
+            "Create New Article";
+
+        form.reset();
+
+        $("#articleId").value = "";
+    }
+
+    editor.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+function closeEditor() {
+    const editor = $("#articleEditor");
+
+    if (!editor) return;
+
+    editor.style.display = "none";
+
+    const form = $("#articleForm");
+
+    if (form) {
+        form.reset();
+    }
+
+    const id = $("#articleId");
+
+    if (id) {
+        id.value = "";
+    }
+}
+
+function setupEditor() {
+    const newButton = $("#newArticleBtn");
+    const closeButton = $("#closeEditorBtn");
+    const cancelButton = $("#cancelEditorBtn");
+    const form = $("#articleForm");
+
+    if (newButton) {
+        newButton.addEventListener(
+            "click",
+            () => openEditor()
+        );
+    }
+
+    if (closeButton) {
+        closeButton.addEventListener(
+            "click",
+            closeEditor
+        );
+    }
+
+    if (cancelButton) {
+        cancelButton.addEventListener(
+            "click",
+            closeEditor
+        );
+    }
+
+    if (!form) return;
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+
+        const title =
+            $("#articleTitle")?.value.trim();
+
+        const category =
+            $("#articleCategory")?.value;
+
+        const author =
+            $("#articleAuthor")?.value.trim();
+
+        const image =
+            $("#articleImage")?.value.trim();
+
+        const excerpt =
+            $("#articleExcerpt")?.value.trim();
+
+        const content =
+            $("#articleContent")?.value.trim();
+
+        if (!title || !excerpt || !content) {
+            showToast(
+                "Please fill in the required fields."
+            );
+
+            return;
+        }
+
+        const articleId =
+            $("#articleId")?.value;
+
+        const articles = getArticles();
+
+        if (articleId) {
+            const index = articles.findIndex(
+                article =>
+                    String(article.id) ===
+                    String(articleId)
+            );
+
+            if (index !== -1) {
+                articles[index] = {
+                    ...articles[index],
+                    title,
+                    category,
+                    author: author || "VimBuzz",
+                    image: image || FALLBACK_IMAGE,
+                    excerpt,
+                    content,
+                    featured:
+                        $("#articleFeatured")?.checked || false,
+                    trending:
+                        $("#articleTrending")?.checked || false
+                };
+
+                saveArticles(articles);
+
+                showToast(
+                    "Article updated successfully!"
+                );
+            }
+        } else {
+            const newArticle = {
+                id:
+                    "vb-" +
+                    Date.now() +
+                    "-" +
+                    Math.random()
+                        .toString(36)
+                        .slice(2, 8),
+
+                title,
+                category,
+                author: author || "VimBuzz",
+                image: image || FALLBACK_IMAGE,
+                excerpt,
+                content,
+                featured:
+                    $("#articleFeatured")?.checked || false,
+                trending:
+                    $("#articleTrending")?.checked || false,
+                views: 0,
+                createdAt:
+                    new Date().toISOString()
+            };
+
+            articles.unshift(newArticle);
+
+            saveArticles(articles);
+
+            showToast(
+                "Article published successfully!"
+            );
+        }
+
+        closeEditor();
+        renderAll();
+    });
+}
+
+/* =========================
+   ADMIN ARTICLE LIST
+========================= */
+
+function renderAdminArticles() {
+    const container = $("#adminArticlesList");
+    const count = $("#articleCount");
+
+    if (!container) return;
+
+    const articles = sortNewest(getArticles());
+
+    if (count) {
+        count.textContent =
+            `${articles.length} article${articles.length === 1 ? "" : "s"}`;
+    }
+
+    if (!articles.length) {
+        container.innerHTML =
+            `<p class="empty-state">No articles yet.</p>`;
+
+        return;
+    }
+
+    container.innerHTML = articles
+        .map(article => `
+            <div
+                class="admin-article"
+                data-admin-id="${escapeHTML(article.id)}"
+            >
+                <img
+                    class="admin-article-image"
+                    src="${escapeHTML(article.image || FALLBACK_IMAGE)}"
+                    alt=""
+                    onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+                >
+
+                <div class="admin-article-info">
+                    <strong>
+                        ${escapeHTML(article.title)}
+                    </strong>
+
+                    <span>
+                        ${escapeHTML(article.category)}
+                    </span>
+
+                    <small>
+                        ${formatDate(article.createdAt)}
+                        •
+                        ${formatViews(article.views)} views
+                    </small>
+                </div>
+
+                <div class="admin-actions">
+
+                    <button
+                        class="admin-action-btn"
+                        type="button"
+                        data-edit-id="${escapeHTML(article.id)}"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        class="admin-action-btn admin-delete"
+                        type="button"
+                        data-delete-id="${escapeHTML(article.id)}"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+            </div>
+        `)
+        .join("");
+}
+
+function deleteArticle(id) {
+    const article = getArticle(id);
+
+    if (!article) return;
+
+    const confirmed = confirm(
+        `Delete "${article.title}"?`
     );
 
-  sections.forEach((section) =>
-    observer.observe(section)
-  );
+    if (!confirmed) return;
+
+    const articles =
+        getArticles().filter(
+            item =>
+                String(item.id) !== String(id)
+        );
+
+    saveArticles(articles);
+
+    renderAll();
+
+    showToast(
+        "Article deleted."
+    );
 }
 
+/* =========================
+   NEWSLETTER
+========================= */
 
-/* =========================================================
-   EXPORT ARTICLES
-   ========================================================= */
+function setupNewsletter() {
+    const form = $("#newsletterForm");
+    const input = $("#newsletterEmail");
+    const message = $("#newsletterMessage");
 
-function exportArticles() {
-  const data = JSON.stringify(
-    articles,
-    null,
-    2
-  );
+    if (!form || !input) return;
 
-  const blob = new Blob(
-    [data],
-    {
-      type: "application/json"
-    }
-  );
+    form.addEventListener("submit", event => {
+        event.preventDefault();
 
-  const url =
-    URL.createObjectURL(blob);
+        const email =
+            input.value.trim().toLowerCase();
 
-  const link =
-    document.createElement("a");
+        if (!email || !email.includes("@")) {
+            if (message) {
+                message.textContent =
+                    "Enter a valid email address.";
+            }
 
-  link.href = url;
+            return;
+        }
 
-  link.download =
-    `vimbuzz-backup-${new Date()
-      .toISOString()
-      .slice(0, 10)}.json`;
+        let subscribers = [];
 
-  document.body.appendChild(link);
+        try {
+            subscribers =
+                JSON.parse(
+                    localStorage.getItem(
+                        SUBSCRIBER_KEY
+                    )
+                ) || [];
+        } catch {
+            subscribers = [];
+        }
 
-  link.click();
+        if (!subscribers.includes(email)) {
+            subscribers.push(email);
 
-  link.remove();
+            localStorage.setItem(
+                SUBSCRIBER_KEY,
+                JSON.stringify(subscribers)
+            );
 
-  URL.revokeObjectURL(url);
+            if (message) {
+                message.textContent =
+                    "You're subscribed to VimBuzz!";
+            }
 
-  showToast("Backup exported.");
+            showToast(
+                "Newsletter subscription saved."
+            );
+        } else {
+            if (message) {
+                message.textContent =
+                    "You're already subscribed.";
+            }
+        }
+
+        input.value = "";
+    });
 }
 
+/* =========================
+   GLOBAL CLICKS
+========================= */
 
-/* =========================================================
-   IMPORT ARTICLES
-   ========================================================= */
+function setupGlobalEvents() {
+    document.addEventListener("click", event => {
 
-function importArticles(file) {
-  if (!file) return;
+        /* Article */
+        const articleTarget =
+            event.target.closest(
+                "[data-article-id]"
+            );
 
-  const reader = new FileReader();
+        if (
+            articleTarget &&
+            !event.target.closest("button")
+        ) {
+            const id =
+                articleTarget.dataset.articleId;
 
-  reader.onload = (event) => {
+            openArticle(id);
 
-    try {
+            return;
+        }
 
-      const imported =
-        JSON.parse(
-          event.target.result
-        );
+        /* Trending */
+        const trending =
+            event.target.closest(
+                ".trending-item[data-article-id]"
+            );
 
-      if (!Array.isArray(imported)) {
-        throw new Error(
-          "Invalid article file."
-        );
-      }
+        if (trending) {
+            openArticle(
+                trending.dataset.articleId
+            );
 
-      const validArticles =
-        imported.filter(
-          (article) =>
-            article &&
-            article.title &&
-            article.content
-        );
+            return;
+        }
 
-      if (!validArticles.length) {
-        throw new Error(
-          "No valid articles found."
-        );
-      }
+        /* Edit */
+        const edit =
+            event.target.closest(
+                "[data-edit-id]"
+            );
 
-      const confirmed =
-        window.confirm(
-          `Import ${validArticles.length} article(s)? This will replace your current articles.`
-        );
+        if (edit) {
+            const article =
+                getArticle(
+                    edit.dataset.editId
+                );
 
-      if (!confirmed) return;
+            if (article) {
+                openEditor(article);
+            }
 
-      articles = validArticles;
+            return;
+        }
 
-      saveArticles();
-      renderAll();
+        /* Delete */
+        const remove =
+            event.target.closest(
+                "[data-delete-id]"
+            );
 
-      showToast(
-        `${validArticles.length} article(s) imported.`
-      );
+        if (remove) {
+            deleteArticle(
+                remove.dataset.deleteId
+            );
 
-    } catch (error) {
-
-      console.error(error);
-
-      showToast(
-        "Could not import this file."
-      );
-
-    }
-
-  };
-
-  reader.readAsText(file);
+            return;
+        }
+    });
 }
 
+/* =========================
+   MODAL EVENTS
+========================= */
 
-/* =========================================================
-   EXPORT / IMPORT EVENTS
-   ========================================================= */
+function setupModal() {
+    const modal = $("#articleModal");
+    const overlay = $("#modalOverlay");
+    const closeButton = $("#closeModal");
 
-document.addEventListener("DOMContentLoaded", () => {
-
-  $("#exportBtn")?.addEventListener(
-    "click",
-    exportArticles
-  );
-
-  $("#importFile")?.addEventListener(
-    "change",
-    (event) => {
-
-      const file =
-        event.target.files?.[0];
-
-      importArticles(file);
-
-      event.target.value = "";
-
+    if (overlay) {
+        overlay.addEventListener(
+            "click",
+            closeArticle
+        );
     }
-  );
 
-});
+    if (closeButton) {
+        closeButton.addEventListener(
+            "click",
+            closeArticle
+        );
+    }
 
+    document.addEventListener(
+        "keydown",
+        event => {
+            if (event.key === "Escape") {
+                closeArticle();
+            }
 
-/* =========================================================
+            if (
+                event.key === "Enter" &&
+                event.target.matches(
+                    "[data-article-id]"
+                )
+            ) {
+                openArticle(
+                    event.target.dataset.articleId
+                );
+            }
+        }
+    );
+}
+
+/* =========================
+   CATEGORY NAVIGATION
+========================= */
+
+function setupCategoryLinks() {
+    const mapping = {
+        news: "latestArticles",
+        sports: "sportsArticles",
+        entertainment: "entertainmentArticles",
+        technology: "technologyArticles",
+        lifestyle: "lifestyleArticles"
+    };
+
+    $all(
+        "a[href], button[data-category]"
+    ).forEach(element => {
+        element.addEventListener("click", event => {
+
+            const category =
+                element.dataset.category ||
+                element.getAttribute("href");
+
+            if (!category) return;
+
+            const clean =
+                category
+                    .replace("#", "")
+                    .replace("/", "")
+                    .toLowerCase();
+
+            if (!mapping[clean]) return;
+
+            const target =
+                document.getElementById(
+                    mapping[clean]
+                );
+
+            if (target) {
+                event.preventDefault();
+
+                target.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            }
+        });
+    });
+}
+
+/* =========================
+   EXPORT / IMPORT
+========================= */
+
+function setupImportExport() {
+    const exportButton = $("#exportBtn");
+    const importInput = $("#importFile");
+
+    if (exportButton) {
+        exportButton.addEventListener(
+            "click",
+            () => {
+                const articles =
+                    getArticles();
+
+                const blob =
+                    new Blob(
+                        [
+                            JSON.stringify(
+                                articles,
+                                null,
+                                2
+                            )
+                        ],
+                        {
+                            type:
+                                "application/json"
+                        }
+                    );
+
+                const url =
+                    URL.createObjectURL(blob);
+
+                const link =
+                    document.createElement("a");
+
+                link.href = url;
+
+                link.download =
+                    "vimbuzz-articles.json";
+
+                document.body.appendChild(link);
+
+                link.click();
+
+                link.remove();
+
+                URL.revokeObjectURL(url);
+
+                showToast(
+                    "Articles exported."
+                );
+            }
+        );
+    }
+
+    if (importInput) {
+        importInput.addEventListener(
+            "change",
+            event => {
+                const file =
+                    event.target.files[0];
+
+                if (!file) return;
+
+                const reader =
+                    new FileReader();
+
+                reader.onload = () => {
+                    try {
+                        const imported =
+                            JSON.parse(
+                                reader.result
+                            );
+
+                        if (
+                            !Array.isArray(
+                                imported
+                            )
+                        ) {
+                            throw new Error(
+                                "Invalid file"
+                            );
+                        }
+
+                        const confirmed =
+                            confirm(
+                                "Import these articles and replace your current articles?"
+                            );
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+                        saveArticles(
+                            imported
+                        );
+
+                        renderAll();
+
+                        showToast(
+                            "Articles imported."
+                        );
+
+                    } catch (error) {
+                        console.error(
+                            error
+                        );
+
+                        showToast(
+                            "Invalid JSON file."
+                        );
+                    }
+
+                    importInput.value = "";
+                };
+
+                reader.readAsText(file);
+            }
+        );
+    }
+}
+
+/* =========================
    TOAST
-   ========================================================= */
+========================= */
 
 let toastTimer;
 
 function showToast(message) {
-  const toast = $("#toast");
+    const toast = $("#toast");
 
-  if (!toast) return;
+    if (!toast) {
+        alert(message);
+        return;
+    }
 
-  toast.textContent = message;
+    toast.textContent = message;
 
-  toast.classList.add("show");
+    toast.classList.add("show");
 
-  clearTimeout(toastTimer);
+    clearTimeout(toastTimer);
 
-  toastTimer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2800);
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
 }
 
+/* =========================
+   SCROLL TOP
+========================= */
 
-/* =========================================================
+function setupScrollTop() {
+    const button = $("#scrollTop");
+
+    if (!button) return;
+
+    window.addEventListener(
+        "scroll",
+        () => {
+            if (window.scrollY > 500) {
+                button.classList.add("show");
+            } else {
+                button.classList.remove("show");
+            }
+        }
+    );
+
+    button.addEventListener(
+        "click",
+        () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+    );
+}
+
+/* =========================
    YEAR
-   ========================================================= */
+========================= */
 
-function updateYear() {
-  const year = $("#currentYear");
+function setupYear() {
+    const year = $("#currentYear");
 
-  if (year) {
-    year.textContent =
-      new Date().getFullYear();
-  }
+    if (year) {
+        year.textContent =
+            new Date().getFullYear();
+    }
 }
 
-
-/* =========================================================
-   OPEN ARTICLE FROM URL
-   Example:
-   ?article=vb-001
-   ========================================================= */
+/* =========================
+   URL ARTICLE
+========================= */
 
 function openArticleFromURL() {
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
 
-  const id =
-    params.get("article");
+    const articleId =
+        params.get("article");
 
-  if (!id) return;
+    if (!articleId) return;
 
-  const article = getArticle(id);
-
-  if (article) {
     setTimeout(() => {
-      openArticle(id);
+        openArticle(articleId);
     }, 300);
-  }
 }
 
-
-document.addEventListener(
-  "DOMContentLoaded",
-  openArticleFromURL
-);
-
-
-/* =========================================================
+/* =========================
    ONLINE / OFFLINE
-   ========================================================= */
+========================= */
 
-window.addEventListener(
-  "offline",
-  () => {
-    showToast(
-      "You are offline. VimBuzz still works locally."
+function setupConnectionStatus() {
+    window.addEventListener(
+        "offline",
+        () => {
+            showToast(
+                "You are offline. VimBuzz is still available."
+            );
+        }
     );
-  }
-);
 
-window.addEventListener(
-  "online",
-  () => {
-    showToast(
-      "Internet connection restored."
+    window.addEventListener(
+        "online",
+        () => {
+            showToast(
+                "You are back online."
+            );
+        }
     );
-  }
-);
+}
 
-
-/* =========================================================
-   DEBUG HELPER
-   ========================================================= */
+/* =========================
+   DEBUG TOOLS
+========================= */
 
 window.VimBuzz = {
-  getArticles: () => articles,
+    getArticles,
+    saveArticles,
+    renderAll,
 
-  save: saveArticles,
+    reset: function () {
+        localStorage.removeItem(
+            STORAGE_KEY
+        );
 
-  reset: () => {
-    const confirmed =
-      window.confirm(
-        "Reset VimBuzz to the original demo articles?"
-      );
+        location.reload();
+    },
 
-    if (!confirmed) return;
+    clear: function () {
+        localStorage.removeItem(
+            STORAGE_KEY
+        );
 
-    articles = [...defaultArticles];
+        renderAll();
 
-    saveArticles();
-    renderAll();
-
-    showToast("VimBuzz has been reset.");
-  }
+        showToast(
+            "Articles cleared."
+        );
+    }
 };
+
+/* =========================
+   START APP
+========================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        console.log(
+            "VimBuzz V2 starting..."
+        );
+
+        /* Make sure sample articles exist */
+        getArticles();
+
+        /* Render immediately */
+        renderAll();
+
+        /* Features */
+        setupMobileMenu();
+        setupSearch();
+        setupEditor();
+        setupGlobalEvents();
+        setupModal();
+        setupSharing();
+        setupNewsletter();
+        setupCategoryLinks();
+        setupImportExport();
+        setupScrollTop();
+        setupYear();
+        setupConnectionStatus();
+
+        /* URL article */
+        openArticleFromURL();
+
+        console.log(
+            "VimBuzz V2 loaded successfully."
+        );
+    }
+);

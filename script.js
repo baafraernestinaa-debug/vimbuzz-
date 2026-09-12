@@ -1,1674 +1,3199 @@
 /* =========================================================
-   VIMBUZZ V2
-   Frontend-only News Website
-   No database • No API • LocalStorage
+   VIMBUZZ V4
+   Complete Frontend JavaScript
+   No Backend • No Database • LocalStorage
    ========================================================= */
 
-"use strict";
+(() => {
+  "use strict";
 
-/* =========================
-   STORAGE
-========================= */
+  /* =========================================================
+     STORAGE
+     ========================================================= */
 
-const STORAGE_KEY = "vimbuzz_articles_v2";
-const SUBSCRIBER_KEY = "vimbuzz_subscribers_v2";
+  const KEYS = {
+    articles: "vimbuzz_articles_v4",
+    likes: "vimbuzz_likes_v4",
+    bookmarks: "vimbuzz_bookmarks_v4",
+    comments: "vimbuzz_comments_v4",
+    subscribers: "vimbuzz_subscribers_v4",
+    settings: "vimbuzz_settings_v4",
+    notifications: "vimbuzz_notifications_v4",
+    searches: "vimbuzz_searches_v4",
+    views: "vimbuzz_views_v4"
+  };
 
-/* =========================
-   SAMPLE ARTICLES
-========================= */
+  /* =========================================================
+     HELPERS
+     ========================================================= */
 
-const DEFAULT_ARTICLES = [
-    {
-        id: "vb-001",
-        title: "Latest Ghana News Making Headlines Today",
-        category: "News",
-        author: "VimBuzz",
-        image: "https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?auto=format&fit=crop&w=1200&q=80",
-        excerpt: "Stay updated with the latest stories, developments and important news from Ghana.",
-        content: "Welcome to VimBuzz. This is your destination for the latest Ghana news, trending stories and important updates.",
-        featured: true,
-        trending: true,
-        views: 1250,
-        createdAt: "2026-09-09T08:00:00"
-    },
-    {
-        id: "vb-002",
-        title: "Ghana Football: Latest Updates and Stories",
-        category: "Sports",
-        author: "VimBuzz Sports",
-        image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1200&q=80",
-        excerpt: "Get the latest football news, results, transfers and stories from Ghana and around the world.",
-        content: "Football fans can follow the latest updates, results, transfer stories and major football developments on VimBuzz.",
-        featured: true,
-        trending: true,
-        views: 980,
-        createdAt: "2026-09-08T15:30:00"
-    },
-    {
-        id: "vb-003",
-        title: "Entertainment Stories Trending in Ghana",
-        category: "Entertainment",
-        author: "VimBuzz Entertainment",
-        image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80",
-        excerpt: "Discover trending entertainment, celebrity and showbiz stories from Ghana.",
-        content: "VimBuzz brings you entertainment news, celebrity updates, music stories and the latest happenings in Ghanaian showbiz.",
-        featured: true,
-        trending: true,
-        views: 870,
-        createdAt: "2026-09-08T12:00:00"
-    },
-    {
-        id: "vb-004",
-        title: "Technology: New Digital Trends to Know",
-        category: "Technology",
-        author: "VimBuzz Tech",
-        image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
-        excerpt: "Explore technology news, apps, AI, smartphones and digital trends.",
-        content: "Technology continues to change rapidly. Follow VimBuzz for technology news, digital tools, artificial intelligence and innovation.",
-        featured: false,
-        trending: true,
-        views: 720,
-        createdAt: "2026-09-07T10:00:00"
-    },
-    {
-        id: "vb-005",
-        title: "Lifestyle: Ideas for Everyday Ghanaian Life",
-        category: "Lifestyle",
-        author: "VimBuzz Lifestyle",
-        image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=80",
-        excerpt: "Lifestyle stories, useful ideas, food, travel and everyday inspiration.",
-        content: "Explore lifestyle stories covering food, travel, fashion, relationships, personal development and everyday life.",
-        featured: false,
-        trending: false,
-        views: 650,
-        createdAt: "2026-09-06T09:00:00"
-    },
-    {
-        id: "vb-006",
-        title: "What Ghanaians Are Talking About Today",
-        category: "News",
-        author: "VimBuzz",
-        image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80",
-        excerpt: "Here are some of the stories and conversations currently getting attention.",
-        content: "VimBuzz brings together important stories and conversations happening across Ghana.",
-        featured: false,
-        trending: true,
-        views: 540,
-        createdAt: "2026-09-05T11:00:00"
-    }
-];
+  const $ = (selector, parent = document) =>
+    parent.querySelector(selector);
 
-/* =========================
-   HELPERS
-========================= */
+  const $$ = (selector, parent = document) =>
+    [...parent.querySelectorAll(selector)];
 
-function $(selector) {
-    return document.querySelector(selector);
-}
-
-function $all(selector) {
-    return document.querySelectorAll(selector);
-}
-
-function escapeHTML(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function getArticles() {
+  function readStorage(key, fallback) {
     try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-
-        if (!saved) {
-            localStorage.setItem(
-                STORAGE_KEY,
-                JSON.stringify(DEFAULT_ARTICLES)
-            );
-
-            return [...DEFAULT_ARTICLES];
-        }
-
-        const parsed = JSON.parse(saved);
-
-        if (!Array.isArray(parsed) || parsed.length === 0) {
-            localStorage.setItem(
-                STORAGE_KEY,
-                JSON.stringify(DEFAULT_ARTICLES)
-            );
-
-            return [...DEFAULT_ARTICLES];
-        }
-
-        return parsed;
+      const value = localStorage.getItem(key);
+      return value ? JSON.parse(value) : fallback;
     } catch (error) {
-        console.error("VimBuzz storage error:", error);
-        return [...DEFAULT_ARTICLES];
+      console.error("Storage read error:", error);
+      return fallback;
     }
-}
+  }
 
-function saveArticles(articles) {
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(articles)
+  function writeStorage(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (error) {
+      console.error("Storage write error:", error);
+      return false;
+    }
+  }
+
+  function uid(prefix = "id") {
+    return (
+      prefix +
+      "_" +
+      Date.now().toString(36) +
+      "_" +
+      Math.random().toString(36).slice(2, 9)
     );
-}
+  }
 
-function formatDate(date) {
+  function escapeHTML(value = "") {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function normalizeText(value = "") {
+    return String(value)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function formatViews(number = 0) {
+    number = Number(number) || 0;
+
+    if (number >= 1000000) {
+      return (number / 1000000).toFixed(1).replace(".0", "") + "M";
+    }
+
+    if (number >= 1000) {
+      return (number / 1000).toFixed(1).replace(".0", "") + "K";
+    }
+
+    return number.toString();
+  }
+
+  function formatDate(date) {
     if (!date) return "Recently";
 
     const d = new Date(date);
 
-    if (isNaN(d.getTime())) return "Recently";
+    if (Number.isNaN(d.getTime())) return "Recently";
 
     return d.toLocaleDateString("en-GH", {
-        day: "numeric",
-        month: "short",
-        year: "numeric"
+      year: "numeric",
+      month: "short",
+      day: "numeric"
     });
-}
+  }
 
-function formatViews(number) {
-    number = Number(number) || 0;
+  function relativeTime(date) {
+    if (!date) return "Recently";
 
-    if (number >= 1000000) {
-        return (number / 1000000).toFixed(1) + "M";
+    const time = new Date(date).getTime();
+
+    if (Number.isNaN(time)) return "Recently";
+
+    const seconds = Math.floor((Date.now() - time) / 1000);
+
+    if (seconds < 60) return "Just now";
+
+    const minutes = Math.floor(seconds / 60);
+
+    if (minutes < 60) {
+      return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
     }
 
-    if (number >= 1000) {
-        return (number / 1000).toFixed(1) + "K";
+    const hours = Math.floor(minutes / 60);
+
+    if (hours < 24) {
+      return `${hours} hour${hours === 1 ? "" : "s"} ago`;
     }
 
-    return number.toString();
-}
+    const days = Math.floor(hours / 24);
 
-function getArticle(id) {
-    return getArticles().find(
-        article => String(article.id) === String(id)
+    if (days < 30) {
+      return `${days} day${days === 1 ? "" : "s"} ago`;
+    }
+
+    return formatDate(date);
+  }
+
+  function truncate(text, length = 130) {
+    text = String(text || "");
+
+    return text.length > length
+      ? text.substring(0, length).trim() + "..."
+      : text;
+  }
+
+  function slugify(text) {
+    return normalizeText(text)
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+
+  /* =========================================================
+     DEFAULT ARTICLES
+     ========================================================= */
+
+  const DEFAULT_ARTICLES = [
+    {
+      id: "vb001",
+      title: "Ghana's Digital Economy Continues to Grow as More Businesses Go Online",
+      category: "Technology",
+      author: "VimBuzz Newsroom",
+      image:
+        "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80",
+      excerpt:
+        "Businesses across Ghana are increasingly using digital tools to reach customers and improve their operations.",
+      content: `
+        <p>Ghana's digital economy continues to expand as businesses increasingly adopt websites, mobile applications and digital payment systems.</p>
+
+        <p>Small businesses are also taking advantage of social media and online marketplaces to reach customers outside their immediate communities.</p>
+
+        <p>Technology entrepreneurs believe the trend will continue as internet access and smartphone adoption increase.</p>
+
+        <p>For young developers and entrepreneurs, the growing digital economy is creating new opportunities to build useful products for the Ghanaian market.</p>
+      `,
+      tags: ["Ghana", "Technology", "Business", "Digital"],
+      date: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      views: 1248,
+      likes: 87,
+      shares: 23,
+      rating: 4.7,
+      featured: true,
+      trending: true,
+      pinned: true,
+      sponsored: false,
+      status: "published"
+    },
+
+    {
+      id: "vb002",
+      title: "Local Football Talent Attracts Attention Ahead of New Season",
+      category: "Sports",
+      author: "VimBuzz Sports",
+      image:
+        "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=1200&q=80",
+      excerpt:
+        "Young footballers are preparing for another competitive season as clubs search for emerging talent.",
+      content: `
+        <p>Young football players are attracting attention from clubs as preparations continue for the upcoming football season.</p>
+
+        <p>Coaches say discipline, fitness and consistency will be important factors for players hoping to progress.</p>
+
+        <p>Several local academies are also increasing their focus on youth development.</p>
+      `,
+      tags: ["Football", "Sports", "Ghana", "Players"],
+      date: new Date(Date.now() - 3600000).toISOString(),
+      updatedAt: new Date(Date.now() - 1800000).toISOString(),
+      views: 2980,
+      likes: 193,
+      shares: 61,
+      rating: 4.8,
+      featured: false,
+      trending: true,
+      pinned: false,
+      sponsored: false,
+      status: "published"
+    },
+
+    {
+      id: "vb003",
+      title: "Ghana Entertainment Scene Welcomes New Wave of Young Creators",
+      category: "Entertainment",
+      author: "VimBuzz Entertainment",
+      image:
+        "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
+      excerpt:
+        "A growing number of young Ghanaian creators are building audiences through digital platforms.",
+      content: `
+        <p>Ghana's entertainment industry is seeing a new generation of young creators use digital platforms to distribute their work.</p>
+
+        <p>From music to comedy and film, social media has become an important tool for discovering new talent.</p>
+      `,
+      tags: ["Entertainment", "Music", "Creators"],
+      date: new Date(Date.now() - 7200000).toISOString(),
+      updatedAt: new Date(Date.now() - 6000000).toISOString(),
+      views: 2150,
+      likes: 145,
+      shares: 39,
+      rating: 4.6,
+      featured: false,
+      trending: true,
+      pinned: false,
+      sponsored: false,
+      status: "published"
+    },
+
+    {
+      id: "vb004",
+      title: "Simple Financial Habits That Can Help Young Ghanaians Save More",
+      category: "Lifestyle",
+      author: "VimBuzz Lifestyle",
+      image:
+        "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80",
+      excerpt:
+        "Small changes in daily spending habits can make a meaningful difference over time.",
+      content: `
+        <p>Building good financial habits does not always require earning a large income.</p>
+
+        <p>Tracking spending, setting clear savings goals and avoiding unnecessary purchases can help people take better control of their money.</p>
+
+        <p>Experts also recommend creating an emergency fund whenever possible.</p>
+      `,
+      tags: ["Money", "Lifestyle", "Savings", "Ghana"],
+      date: new Date(Date.now() - 10800000).toISOString(),
+      updatedAt: new Date(Date.now() - 9000000).toISOString(),
+      views: 1730,
+      likes: 102,
+      shares: 28,
+      rating: 4.5,
+      featured: false,
+      trending: false,
+      pinned: false,
+      sponsored: false,
+      status: "published"
+    },
+
+    {
+      id: "vb005",
+      title: "Businesses Turn to Social Media to Reach More Customers",
+      category: "News",
+      author: "VimBuzz Business",
+      image:
+        "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80",
+      excerpt:
+        "Social media marketing is becoming increasingly important for small and medium-sized businesses.",
+      content: `
+        <p>Businesses across Ghana are increasingly using social media platforms to advertise their products and services.</p>
+
+        <p>For smaller companies, social media provides an affordable way to communicate directly with customers.</p>
+      `,
+      tags: ["Business", "Social Media", "Ghana"],
+      date: new Date(Date.now() - 14400000).toISOString(),
+      updatedAt: new Date(Date.now() - 12000000).toISOString(),
+      views: 1420,
+      likes: 75,
+      shares: 19,
+      rating: 4.4,
+      featured: false,
+      trending: false,
+      pinned: false,
+      sponsored: false,
+      status: "published"
+    },
+
+    {
+      id: "vb006",
+      title: "New Mobile Tools Make Everyday Tasks Easier",
+      category: "Technology",
+      author: "VimBuzz Tech",
+      image:
+        "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80",
+      excerpt:
+        "Mobile technology continues to change the way people work, communicate and access services.",
+      content: `
+        <p>Smartphones have become important tools for communication, learning, entertainment and business.</p>
+
+        <p>Developers continue to create applications designed to solve everyday problems for users.</p>
+      `,
+      tags: ["Technology", "Mobile", "Apps"],
+      date: new Date(Date.now() - 18000000).toISOString(),
+      updatedAt: new Date(Date.now() - 15000000).toISOString(),
+      views: 980,
+      likes: 54,
+      shares: 14,
+      rating: 4.3,
+      featured: false,
+      trending: false,
+      pinned: false,
+      sponsored: false,
+      status: "published"
+    }
+  ];
+
+  /* =========================================================
+     LOAD DATA
+     ========================================================= */
+
+  let articles = readStorage(KEYS.articles, null);
+
+  if (!Array.isArray(articles) || articles.length === 0) {
+    articles = DEFAULT_ARTICLES;
+    writeStorage(KEYS.articles, articles);
+  }
+
+  let likes = readStorage(KEYS.likes, {});
+  let bookmarks = readStorage(KEYS.bookmarks, []);
+  let comments = readStorage(KEYS.comments, {});
+  let subscribers = readStorage(KEYS.subscribers, []);
+  let notifications = readStorage(KEYS.notifications, []);
+  let searches = readStorage(KEYS.searches, []);
+  let settings = readStorage(KEYS.settings, {
+    darkMode: false,
+    readingMode: false,
+    fontSize: "normal"
+  });
+
+  /* =========================================================
+     SAVE
+     ========================================================= */
+
+  function saveArticles() {
+    writeStorage(KEYS.articles, articles);
+  }
+
+  function saveLikes() {
+    writeStorage(KEYS.likes, likes);
+  }
+
+  function saveBookmarks() {
+    writeStorage(KEYS.bookmarks, bookmarks);
+  }
+
+  function saveComments() {
+    writeStorage(KEYS.comments, comments);
+  }
+
+  function saveSubscribers() {
+    writeStorage(KEYS.subscribers, subscribers);
+  }
+
+  function saveNotifications() {
+    writeStorage(KEYS.notifications, notifications);
+  }
+
+  function saveSettings() {
+    writeStorage(KEYS.settings, settings);
+  }
+
+  function saveSearches() {
+    writeStorage(KEYS.searches, searches);
+  }
+
+  /* =========================================================
+     TOAST
+     ========================================================= */
+
+  function toast(message, type = "success") {
+    let el = $("#toast");
+
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "toast";
+      el.className = "toast";
+      document.body.appendChild(el);
+    }
+
+    el.textContent = message;
+    el.classList.remove("show", "success", "error", "info");
+    el.classList.add("show", type);
+
+    clearTimeout(window.__vbToastTimer);
+
+    window.__vbToastTimer = setTimeout(() => {
+      el.classList.remove("show");
+    }, 3000);
+  }
+
+  /* =========================================================
+     NOTIFICATIONS
+     ========================================================= */
+
+  function addNotification(title, message) {
+    notifications.unshift({
+      id: uid("notification"),
+      title,
+      message,
+      date: new Date().toISOString(),
+      read: false
+    });
+
+    notifications = notifications.slice(0, 50);
+
+    saveNotifications();
+
+    renderNotifications();
+  }
+
+  function renderNotifications() {
+    const list = $("#notificationList");
+
+    if (!list) return;
+
+    if (!notifications.length) {
+      list.innerHTML =
+        '<div class="empty-state">No notifications yet.</div>';
+      return;
+    }
+
+    list.innerHTML = notifications
+      .map(
+        n => `
+        <div class="notification-item ${n.read ? "read" : ""}">
+          <strong>${escapeHTML(n.title)}</strong>
+          <p>${escapeHTML(n.message)}</p>
+          <small>${relativeTime(n.date)}</small>
+        </div>
+      `
+      )
+      .join("");
+  }
+
+  /* =========================================================
+     ARTICLE HELPERS
+     ========================================================= */
+
+  function getArticle(id) {
+    return articles.find(article => String(article.id) === String(id));
+  }
+
+  function publishedArticles() {
+    return articles.filter(
+      article => article.status !== "draft"
     );
-}
+  }
 
-function sortNewest(articles) {
-    return [...articles].sort(
-        (a, b) =>
-            new Date(b.createdAt || 0) -
-            new Date(a.createdAt || 0)
+  function sortedNewest(list) {
+    return [...list].sort(
+      (a, b) =>
+        new Date(b.updatedAt || b.date) -
+        new Date(a.updatedAt || a.date)
     );
-}
+  }
 
-/* =========================
-   IMAGE FALLBACK
-========================= */
+  function categoryArticles(category) {
+    return publishedArticles().filter(
+      article =>
+        normalizeText(article.category) === normalizeText(category)
+    );
+  }
 
-const FALLBACK_IMAGE =
-    "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80";
+  /* =========================================================
+     ARTICLE CARD
+     ========================================================= */
 
-function imageHTML(article, className = "article-image") {
+  function articleCard(article, options = {}) {
+    const isLiked = !!likes[article.id];
+    const isSaved = bookmarks.includes(article.id);
+
+    const tags = Array.isArray(article.tags)
+      ? article.tags
+      : [];
+
     return `
-        <img
-            class="${className}"
-            src="${escapeHTML(article.image || FALLBACK_IMAGE)}"
+      <article class="article-card"
+        data-article-id="${escapeHTML(article.id)}">
+
+        <div class="article-image-wrap">
+          <img
+            src="${escapeHTML(article.image || "")}"
             alt="${escapeHTML(article.title)}"
             loading="lazy"
-            onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
-        >
-    `;
-}
+            onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=900&q=80'"
+          >
 
-/* =========================
-   ARTICLE CARD
-========================= */
+          <span class="category-tag">
+            ${escapeHTML(article.category)}
+          </span>
 
-function articleCard(article) {
-    return `
-        <article
-            class="article-card"
-            data-article-id="${escapeHTML(article.id)}"
-            tabindex="0"
-        >
-            <div class="article-image-wrap">
-                ${imageHTML(article)}
-                <span class="category-tag">
-                    ${escapeHTML(article.category)}
-                </span>
+          ${
+            article.sponsored
+              ? `<span class="sponsored-label">Sponsored</span>`
+              : ""
+          }
+        </div>
+
+        <div class="article-body">
+
+          <h3 class="article-title">
+            ${escapeHTML(article.title)}
+          </h3>
+
+          <p class="article-excerpt">
+            ${escapeHTML(
+              article.excerpt || truncate(article.content, 130)
+            )}
+          </p>
+
+          ${
+            tags.length
+              ? `
+              <div class="article-tags">
+                ${tags
+                  .slice(0, 4)
+                  .map(
+                    tag =>
+                      `<span class="article-tag">#${escapeHTML(
+                        tag
+                      )}</span>`
+                  )
+                  .join("")}
+              </div>
+              `
+              : ""
+          }
+
+          <div class="article-meta">
+            <span>
+              ${escapeHTML(article.author || "VimBuzz")}
+            </span>
+
+            <span>
+              ${relativeTime(article.updatedAt || article.date)}
+            </span>
+
+            <span>
+              ${formatViews(article.views || 0)} views
+            </span>
+          </div>
+
+          <div class="card-footer">
+
+            <button
+              class="read-more"
+              data-open-article="${escapeHTML(article.id)}">
+              Read Article
+            </button>
+
+            <div class="card-actions">
+
+              <button
+                class="article-action mini-like ${
+                  isLiked ? "active" : ""
+                }"
+                data-like="${escapeHTML(article.id)}"
+                aria-label="Like article">
+                ♥ ${formatViews(article.likes || 0)}
+              </button>
+
+              <button
+                class="article-action mini-bookmark ${
+                  isSaved ? "active" : ""
+                }"
+                data-bookmark="${escapeHTML(article.id)}"
+                aria-label="Save article">
+                🔖
+              </button>
+
             </div>
 
-            <div class="article-card-content">
+          </div>
 
-                <div class="article-meta">
-                    <span>${formatDate(article.createdAt)}</span>
-                    <span>•</span>
-                    <span>${formatViews(article.views)} views</span>
-                </div>
-
-                <h3>
-                    ${escapeHTML(article.title)}
-                </h3>
-
-                <p class="article-excerpt">
-                    ${escapeHTML(article.excerpt)}
-                </p>
-
-                <div class="card-footer">
-                    <span>
-                        ${escapeHTML(article.author || "VimBuzz")}
-                    </span>
-
-                    <span class="read-more">
-                        Read →
-                    </span>
-                </div>
-
-            </div>
-        </article>
+        </div>
+      </article>
     `;
-}
+  }
 
-/* =========================
-   HERO
-========================= */
+  /* =========================================================
+     HERO
+     ========================================================= */
 
-function renderHero() {
+  function renderHero() {
     const container = $("#heroGrid");
 
     if (!container) return;
 
-    const articles = sortNewest(getArticles());
+    const published = publishedArticles();
 
-    const featured =
-        articles.filter(a => a.featured).slice(0, 1);
+    let featured = published.filter(a => a.featured);
 
-    const main =
-        featured[0] ||
-        articles[0];
-
-    const side =
-        articles
-            .filter(a => a.id !== main?.id)
-            .slice(0, 2);
-
-    if (!main) {
-        container.innerHTML = "";
-        return;
+    if (!featured.length) {
+      featured = sortedNewest(published).slice(0, 1);
     }
 
+    const main = featured[0];
+
+    if (!main) {
+      container.innerHTML =
+        '<div class="empty-state">No featured article available.</div>';
+      return;
+    }
+
+    const side = sortedNewest(
+      published.filter(a => a.id !== main.id)
+    ).slice(0, 4);
+
     container.innerHTML = `
-        <article
-            class="hero-main"
-            data-article-id="${escapeHTML(main.id)}"
-            tabindex="0"
+      <article
+        class="hero-main"
+        data-open-article="${escapeHTML(main.id)}">
+
+        <img
+          src="${escapeHTML(main.image)}"
+          alt="${escapeHTML(main.title)}"
+          onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80'"
         >
-            ${imageHTML(main)}
 
-            <div class="hero-overlay"></div>
+        <div class="hero-overlay"></div>
 
-            <div class="hero-content">
+        <div class="hero-content">
 
-                <span class="category-tag">
-                    ${escapeHTML(main.category)}
-                </span>
+          <span class="category-tag">
+            ${escapeHTML(main.category)}
+          </span>
 
-                <h1>
-                    ${escapeHTML(main.title)}
-                </h1>
+          <h1>${escapeHTML(main.title)}</h1>
 
-                <p>
-                    ${escapeHTML(main.excerpt)}
-                </p>
+          <p>${escapeHTML(main.excerpt || "")}</p>
 
-                <div class="article-meta">
-                    <span>${formatDate(main.createdAt)}</span>
-                    <span>•</span>
-                    <span>${formatViews(main.views)} views</span>
+          <div class="article-meta">
+            <span>${escapeHTML(main.author)}</span>
+            <span>${relativeTime(main.updatedAt || main.date)}</span>
+            <span>${formatViews(main.views)} views</span>
+          </div>
+
+        </div>
+
+      </article>
+
+      <div class="hero-side">
+        ${side
+          .map(
+            article => `
+              <article
+                class="hero-side-card"
+                data-open-article="${escapeHTML(article.id)}">
+
+                <img
+                  src="${escapeHTML(article.image)}"
+                  alt="${escapeHTML(article.title)}"
+                >
+
+                <div>
+                  <span class="category-tag">
+                    ${escapeHTML(article.category)}
+                  </span>
+
+                  <h3>${escapeHTML(article.title)}</h3>
+
+                  <small>
+                    ${relativeTime(article.updatedAt || article.date)}
+                  </small>
                 </div>
 
-            </div>
-        </article>
-
-        <div class="hero-side">
-            ${side.map(article => `
-                <article
-                    class="hero-side-card"
-                    data-article-id="${escapeHTML(article.id)}"
-                    tabindex="0"
-                >
-                    ${imageHTML(article)}
-
-                    <div class="hero-side-card-content">
-                        <span class="category-tag">
-                            ${escapeHTML(article.category)}
-                        </span>
-
-                        <h3>
-                            ${escapeHTML(article.title)}
-                        </h3>
-
-                        <div class="article-meta">
-                            ${formatDate(article.createdAt)}
-                        </div>
-                    </div>
-                </article>
-            `).join("")}
-        </div>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
     `;
-}
+  }
 
-/* =========================
-   LATEST
-========================= */
+  /* =========================================================
+     LATEST
+     ========================================================= */
 
-function renderLatest() {
+  function renderLatest() {
     const container = $("#latestArticles");
 
     if (!container) return;
 
-    const articles = sortNewest(getArticles())
-        .slice(0, 6);
+    const list = sortedNewest(publishedArticles()).slice(0, 12);
 
-    if (!articles.length) {
-        container.innerHTML =
-            `<p class="empty-state">No articles available yet.</p>`;
-        return;
-    }
+    container.innerHTML = list.length
+      ? list.map(article => articleCard(article)).join("")
+      : '<div class="empty-state">No articles available.</div>';
+  }
 
-    container.innerHTML =
-        articles.map(articleCard).join("");
-}
+  /* =========================================================
+     MOST READ
+     ========================================================= */
 
-/* =========================
-   CATEGORY
-========================= */
-
-function renderCategory(category, elementId) {
-    const container = $("#" + elementId);
-
-    if (!container) return;
-
-    const articles = sortNewest(getArticles())
-        .filter(article =>
-            article.category.toLowerCase() ===
-            category.toLowerCase()
-        )
-        .slice(0, 4);
-
-    if (!articles.length) {
-        container.innerHTML = `
-            <div class="empty-state">
-                No ${escapeHTML(category)} articles yet.
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML =
-        articles.map(articleCard).join("");
-}
-
-/* =========================
-   MOST READ
-========================= */
-
-function renderMostRead() {
+  function renderMostRead() {
     const container = $("#mostRead");
 
     if (!container) return;
 
-    const articles = [...getArticles()]
-        .sort(
-            (a, b) =>
-                (Number(b.views) || 0) -
-                (Number(a.views) || 0)
-        )
-        .slice(0, 5);
+    const list = [...publishedArticles()]
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 5);
 
-    if (!articles.length) {
-        container.innerHTML =
-            `<p class="empty-state">No popular articles yet.</p>`;
-        return;
-    }
-
-    container.innerHTML = articles
-        .map((article, index) => `
+    container.innerHTML = list.length
+      ? list
+          .map(
+            (article, index) => `
             <article
-                class="most-read-item"
-                data-article-id="${escapeHTML(article.id)}"
-                tabindex="0"
-            >
-                <span class="most-read-number">
-                    ${String(index + 1).padStart(2, "0")}
+              class="most-read-item"
+              data-open-article="${escapeHTML(article.id)}">
+
+              <div class="most-read-number">
+                ${String(index + 1).padStart(2, "0")}
+              </div>
+
+              <div>
+                <span class="category-tag">
+                  ${escapeHTML(article.category)}
                 </span>
 
-                <div>
-                    <span class="category-tag">
-                        ${escapeHTML(article.category)}
-                    </span>
+                <h3>${escapeHTML(article.title)}</h3>
 
-                    <h3>
-                        ${escapeHTML(article.title)}
-                    </h3>
+                <small>
+                  ${formatViews(article.views)} views
+                </small>
+              </div>
 
-                    <div class="article-meta">
-                        ${formatViews(article.views)} views
-                    </div>
-                </div>
             </article>
-        `)
-        .join("");
-}
+          `
+          )
+          .join("")
+      : '<div class="empty-state">Nothing to show.</div>';
+  }
 
-/* =========================
-   TRENDING
-========================= */
+  /* =========================================================
+     CATEGORY
+     ========================================================= */
 
-function renderTrending() {
+  function renderCategory(category, selector) {
+    const container = $(selector);
+
+    if (!container) return;
+
+    const list = sortedNewest(
+      categoryArticles(category)
+    ).slice(0, 6);
+
+    container.innerHTML = list.length
+      ? list.map(article => articleCard(article)).join("")
+      : '<div class="empty-state">No articles in this category yet.</div>';
+  }
+
+  /* =========================================================
+     TRENDING
+     ========================================================= */
+
+  function renderTrending() {
     const container = $("#trendingList");
 
     if (!container) return;
 
-    let articles = getArticles()
-        .filter(article => article.trending);
+    const list = [
+      ...publishedArticles()
+        .filter(a => a.trending)
+        .sort((a, b) => (b.views || 0) - (a.views || 0)),
+      ...publishedArticles().filter(a => !a.trending)
+    ].slice(0, 10);
 
-    if (!articles.length) {
-        articles = [...getArticles()]
-            .sort(
-                (a, b) =>
-                    (Number(b.views) || 0) -
-                    (Number(a.views) || 0)
-            );
+    container.innerHTML = list
+      .map(
+        article => `
+          <button
+            class="trending-item"
+            data-open-article="${escapeHTML(article.id)}">
+            <span>#</span>
+            ${escapeHTML(article.title)}
+          </button>
+        `
+      )
+      .join("");
+  }
+
+  /* =========================================================
+     BREAKING NEWS
+     ========================================================= */
+
+  function renderBreakingNews() {
+    const bar = $("#breakingBar");
+    const text = $("#breakingNews");
+
+    if (!bar || !text) return;
+
+    const breaking =
+      publishedArticles().find(a => a.pinned) ||
+      sortedNewest(publishedArticles())[0];
+
+    if (!breaking) {
+      bar.style.display = "none";
+      return;
     }
 
-    articles = articles.slice(0, 8);
+    text.innerHTML = `
+      <button data-open-article="${escapeHTML(breaking.id)}">
+        ${escapeHTML(breaking.title)}
+      </button>
+    `;
 
-    container.innerHTML = articles
-        .map(article => `
-            <button
-                class="trending-item"
-                type="button"
-                data-article-id="${escapeHTML(article.id)}"
-            >
-                ${escapeHTML(article.title)}
-            </button>
-        `)
-        .join("");
-}
+    bar.style.display = "";
+  }
 
-/* =========================
-   RENDER EVERYTHING
-========================= */
+  /* =========================================================
+     SEARCH
+     ========================================================= */
 
-function renderAll() {
-    renderHero();
-    renderLatest();
-    renderMostRead();
-    renderCategory("Sports", "sportsArticles");
-    renderCategory("Entertainment", "entertainmentArticles");
-    renderCategory("Technology", "technologyArticles");
-    renderCategory("Lifestyle", "lifestyleArticles");
-    renderTrending();
-    renderAdminArticles();
-}
+  function performSearch(query) {
+    query = String(query || "").trim();
 
-/* =========================
-   MOBILE MENU
-========================= */
-
-function setupMobileMenu() {
-    const menuButton = $("#menuBtn");
-    const mobileNav = $("#mobileNav");
-
-    if (!menuButton || !mobileNav) return;
-
-    menuButton.addEventListener("click", () => {
-        mobileNav.classList.toggle("open");
-        menuButton.classList.toggle("active");
-    });
-
-    $all("#mobileNav a").forEach(link => {
-        link.addEventListener("click", () => {
-            mobileNav.classList.remove("open");
-            menuButton.classList.remove("active");
-        });
-    });
-}
-
-/* =========================
-   SEARCH
-========================= */
-
-function setupSearch() {
-    const searchButton = $("#searchBtn");
-    const searchBox = $("#searchBox");
-    const searchForm = $("#searchForm");
-    const searchInput = $("#searchInput");
-    const clearButton = $("#clearSearch");
-
-    if (searchButton && searchBox) {
-        searchButton.addEventListener("click", () => {
-            searchBox.classList.toggle("open");
-
-            if (searchBox.classList.contains("open")) {
-                setTimeout(() => {
-                    searchInput?.focus();
-                }, 100);
-            }
-        });
-    }
-
-    if (searchForm && searchInput) {
-        searchForm.addEventListener("submit", event => {
-            event.preventDefault();
-
-            performSearch(searchInput.value.trim());
-        });
-    }
-
-    if (clearButton) {
-        clearButton.addEventListener("click", () => {
-            if (searchInput) {
-                searchInput.value = "";
-            }
-
-            performSearch("");
-        });
-    }
-}
-
-function performSearch(query) {
     const section = $("#searchResultsSection");
     const container = $("#searchResults");
 
     if (!section || !container) return;
 
-    query = query.toLowerCase().trim();
-
     if (!query) {
-        section.style.display = "none";
-        return;
+      section.hidden = true;
+      return;
     }
 
-    const results = getArticles().filter(article => {
-        const text = `
-            ${article.title}
-            ${article.category}
-            ${article.author}
-            ${article.excerpt}
-            ${article.content}
-        `.toLowerCase();
+    const q = normalizeText(query);
 
-        return text.includes(query);
+    const results = publishedArticles().filter(article => {
+      const text = normalizeText(
+        [
+          article.title,
+          article.category,
+          article.author,
+          article.excerpt,
+          article.content,
+          ...(article.tags || [])
+        ].join(" ")
+      );
+
+      return text.includes(q);
     });
 
-    section.style.display = "block";
+    searches = [
+      query,
+      ...searches.filter(
+        item => normalizeText(item) !== q
+      )
+    ].slice(0, 10);
 
-    if (!results.length) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <h3>No results found</h3>
-                <p>Try another search.</p>
+    saveSearches();
+
+    section.hidden = false;
+
+    container.innerHTML = results.length
+      ? results.map(article => articleCard(article)).join("")
+      : `
+        <div class="empty-state">
+          <h3>No results found</h3>
+          <p>Try another search term.</p>
+        </div>
+      `;
+  }
+
+  function renderSearchSuggestions(query = "") {
+    const box = $("#searchSuggestions");
+
+    if (!box) return;
+
+    const q = normalizeText(query);
+
+    if (!q && !searches.length) {
+      box.innerHTML = "";
+      box.hidden = true;
+      return;
+    }
+
+    let suggestions = searches;
+
+    if (q) {
+      suggestions = publishedArticles()
+        .filter(article =>
+          normalizeText(article.title).includes(q)
+        )
+        .slice(0, 5)
+        .map(article => article.title);
+    }
+
+    box.innerHTML = suggestions
+      .slice(0, 7)
+      .map(
+        item => `
+          <button
+            class="search-suggestion"
+            type="button"
+            data-search-suggestion="${escapeHTML(item)}">
+            🔎 ${escapeHTML(item)}
+          </button>
+        `
+      )
+      .join("");
+
+    box.hidden = !suggestions.length;
+  }
+
+  /* =========================================================
+     MODAL
+     ========================================================= */
+
+  let currentArticleId = null;
+
+  function openArticle(id) {
+    const article = getArticle(id);
+
+    if (!article) {
+      toast("Article not found.", "error");
+      return;
+    }
+
+    currentArticleId = article.id;
+
+    article.views = Number(article.views || 0) + 1;
+    saveArticles();
+
+    const modal = $("#articleModal");
+
+    if (!modal) {
+      showFallbackArticle(article);
+      return;
+    }
+
+    const image = $("#modalImage");
+    const category = $("#modalCategory");
+    const date = $("#modalDate");
+    const title = $("#modalTitle");
+    const author = $("#modalAuthor");
+    const excerpt = $("#modalExcerpt");
+    const body = $("#modalBody");
+
+    if (image) {
+      image.src = article.image || "";
+      image.alt = article.title;
+    }
+
+    if (category) category.textContent = article.category;
+    if (date) {
+      date.textContent = `${formatDate(
+        article.date
+      )} • Updated ${relativeTime(article.updatedAt || article.date)}`;
+    }
+
+    if (title) title.textContent = article.title;
+    if (author) author.textContent = article.author || "VimBuzz";
+    if (excerpt) excerpt.textContent = article.excerpt || "";
+
+    if (body) {
+      body.innerHTML = `
+        ${article.content || `<p>${escapeHTML(article.excerpt || "")}</p>`}
+
+        ${
+          article.tags?.length
+            ? `
+            <div class="article-tags modal-tags">
+              ${article.tags
+                .map(
+                  tag =>
+                    `<span class="article-tag">#${escapeHTML(
+                      tag
+                    )}</span>`
+                )
+                .join("")}
             </div>
-        `;
-        return;
+            `
+            : ""
+        }
+      `;
     }
 
-    container.innerHTML =
-        sortNewest(results)
-            .map(articleCard)
-            .join("");
+    updateArticleActionButtons(article);
+    renderComments(article.id);
+    renderRelated(article);
+    resetReadingProgress();
 
-    section.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-}
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
 
-/* =========================
-   ARTICLE MODAL
-========================= */
+    history.replaceState(
+      null,
+      "",
+      `${location.pathname}?article=${encodeURIComponent(
+        article.id
+      )}`
+    );
 
-function openArticle(id) {
+    setTimeout(() => {
+      const dialog = $(".modal-dialog", modal);
+      if (dialog) dialog.scrollTop = 0;
+    }, 20);
+
+    renderAll();
+  }
+
+  function showFallbackArticle(article) {
+    alert(
+      `${article.title}\n\n${article.excerpt || ""}`
+    );
+  }
+
+  function closeArticle() {
+    const modal = $("#articleModal");
+
+    if (modal) modal.hidden = true;
+
+    document.body.classList.remove("modal-open");
+
+    currentArticleId = null;
+
+    if (location.search) {
+      history.replaceState(
+        null,
+        "",
+        location.pathname
+      );
+    }
+
+    stopSpeech();
+  }
+
+  /* =========================================================
+     ARTICLE ACTIONS
+     ========================================================= */
+
+  function updateArticleActionButtons(article) {
+    const likeBtn = $("#likeArticleBtn");
+    const bookmarkBtn = $("#bookmarkArticleBtn");
+    const likesCount = $("#modalLikes");
+
+    const liked = !!likes[article.id];
+    const saved = bookmarks.includes(article.id);
+
+    if (likeBtn) {
+      likeBtn.classList.toggle("active", liked);
+      likeBtn.innerHTML = liked
+        ? "♥ Liked"
+        : "♡ Like";
+    }
+
+    if (bookmarkBtn) {
+      bookmarkBtn.classList.toggle("active", saved);
+      bookmarkBtn.innerHTML = saved
+        ? "🔖 Saved"
+        : "🔖 Save";
+    }
+
+    if (likesCount) {
+      likesCount.textContent = formatViews(
+        article.likes || 0
+      );
+    }
+  }
+
+  function toggleLike(id) {
     const article = getArticle(id);
 
     if (!article) return;
 
-    /* Increase views */
-    const articles = getArticles();
+    if (likes[id]) {
+      delete likes[id];
+      article.likes = Math.max(
+        0,
+        Number(article.likes || 0) - 1
+      );
 
-    const index = articles.findIndex(
-        a => String(a.id) === String(id)
-    );
+      toast("Like removed.", "info");
+    } else {
+      likes[id] = true;
+      article.likes = Number(article.likes || 0) + 1;
 
-    if (index !== -1) {
-        articles[index].views =
-            (Number(articles[index].views) || 0) + 1;
-
-        saveArticles(articles);
-
-        article.views = articles[index].views;
+      toast("Article liked ❤️");
     }
 
-    const modal = $("#articleModal");
+    saveLikes();
+    saveArticles();
 
-    if (!modal) return;
-
-    const modalImage = $("#modalImage");
-    const modalCategory = $("#modalCategory");
-    const modalDate = $("#modalDate");
-    const modalTitle = $("#modalTitle");
-    const modalAuthor = $("#modalAuthor");
-    const modalExcerpt = $("#modalExcerpt");
-    const modalBody = $("#modalBody");
-
-    if (modalImage) {
-        modalImage.src =
-            article.image || FALLBACK_IMAGE;
-
-        modalImage.alt = article.title;
-
-        modalImage.onerror = function () {
-            this.onerror = null;
-            this.src = FALLBACK_IMAGE;
-        };
+    if (currentArticleId === id) {
+      updateArticleActionButtons(article);
     }
 
-    if (modalCategory) {
-        modalCategory.textContent =
-            article.category;
+    renderAll();
+  }
+
+  function toggleBookmark(id) {
+    const index = bookmarks.indexOf(id);
+
+    if (index >= 0) {
+      bookmarks.splice(index, 1);
+      toast("Removed from saved articles.", "info");
+    } else {
+      bookmarks.push(id);
+      toast("Article saved 🔖");
     }
 
-    if (modalDate) {
-        modalDate.textContent =
-            `${formatDate(article.createdAt)} • ${formatViews(article.views)} views`;
+    saveBookmarks();
+
+    if (currentArticleId === id) {
+      updateArticleActionButtons(getArticle(id));
     }
 
-    if (modalTitle) {
-        modalTitle.textContent =
-            article.title;
+    renderSavedArticles();
+    renderAll();
+  }
+
+  /* =========================================================
+     SAVED ARTICLES
+     ========================================================= */
+
+  function createSavedButton() {
+    if ($("#savedBtn")) return;
+
+    const headerActions =
+      $(".header-actions") ||
+      $(".site-header .container");
+
+    if (!headerActions) return;
+
+    const button = document.createElement("button");
+
+    button.id = "savedBtn";
+    button.className = "icon-button";
+    button.type = "button";
+    button.title = "Saved Articles";
+    button.innerHTML = "🔖 <span class='saved-count'>0</span>";
+
+    headerActions.appendChild(button);
+  }
+
+  function updateSavedBadge() {
+    const button = $("#savedBtn");
+
+    if (!button) return;
+
+    const count = $(".saved-count", button);
+
+    if (count) {
+      count.textContent = bookmarks.length;
+    }
+  }
+
+  function openSavedPanel() {
+    const panel = $("#savedPanel");
+
+    if (!panel) {
+      toast(
+        bookmarks.length
+          ? `${bookmarks.length} saved article(s)`
+          : "No saved articles yet.",
+        "info"
+      );
+      return;
     }
 
-    if (modalAuthor) {
-        modalAuthor.textContent =
-            `By ${article.author || "VimBuzz"}`;
+    renderSavedArticles();
+
+    panel.hidden = false;
+
+    const overlay = $("#savedOverlay");
+
+    if (overlay) overlay.hidden = false;
+  }
+
+  function closeSavedPanel() {
+    const panel = $("#savedPanel");
+    const overlay = $("#savedOverlay");
+
+    if (panel) panel.hidden = true;
+    if (overlay) overlay.hidden = true;
+  }
+
+  function renderSavedArticles() {
+    const container = $("#savedArticles");
+
+    if (!container) return;
+
+    const saved = bookmarks
+      .map(id => getArticle(id))
+      .filter(Boolean);
+
+    container.innerHTML = saved.length
+      ? saved
+          .map(
+            article => `
+              <article
+                class="saved-article"
+                data-open-article="${escapeHTML(article.id)}">
+
+                <img
+                  src="${escapeHTML(article.image)}"
+                  alt="${escapeHTML(article.title)}"
+                >
+
+                <div>
+                  <strong>
+                    ${escapeHTML(article.title)}
+                  </strong>
+
+                  <small>
+                    ${escapeHTML(article.category)}
+                  </small>
+
+                  <button
+                    type="button"
+                    data-remove-bookmark="${escapeHTML(article.id)}">
+                    Remove
+                  </button>
+                </div>
+
+              </article>
+            `
+          )
+          .join("")
+      : '<div class="empty-state">No saved articles yet.</div>';
+
+    updateSavedBadge();
+  }
+
+  /* =========================================================
+     COMMENTS
+     ========================================================= */
+
+  function getComments(articleId) {
+    if (!Array.isArray(comments[articleId])) {
+      comments[articleId] = [];
     }
 
-    if (modalExcerpt) {
-        modalExcerpt.textContent =
-            article.excerpt || "";
+    return comments[articleId];
+  }
+
+  function renderComments(articleId) {
+    const container = $("#commentsList");
+    const count = $("#commentCount");
+
+    if (!container) return;
+
+    const list = getComments(articleId);
+
+    if (count) count.textContent = list.length;
+
+    if (!list.length) {
+      container.innerHTML =
+        '<div class="empty-state">No comments yet. Be the first to comment.</div>';
+      return;
     }
 
-    if (modalBody) {
-        modalBody.textContent =
-            article.content || article.excerpt || "";
+    container.innerHTML = list
+      .map(
+        comment => `
+          <article class="comment">
+
+            <div class="comment-header">
+              <strong>
+                ${escapeHTML(comment.name)}
+              </strong>
+
+              <small>
+                ${relativeTime(comment.date)}
+              </small>
+            </div>
+
+            <p>${escapeHTML(comment.text)}</p>
+
+            <button
+              type="button"
+              class="comment-like"
+              data-comment-like="${escapeHTML(comment.id)}">
+              ♥ ${comment.likes || 0}
+            </button>
+
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  function submitComment(event) {
+    event.preventDefault();
+
+    if (!currentArticleId) return;
+
+    const nameInput = $("#commentName");
+    const textInput = $("#commentText");
+
+    const name = nameInput?.value.trim();
+    const text = textInput?.value.trim();
+
+    if (!name || !text) {
+      toast("Enter your name and comment.", "error");
+      return;
     }
 
-    modal.dataset.currentArticle =
-        article.id;
+    const list = getComments(currentArticleId);
 
-    modal.classList.add("open");
-    document.body.classList.add("modal-open");
+    list.unshift({
+      id: uid("comment"),
+      name,
+      text,
+      likes: 0,
+      date: new Date().toISOString()
+    });
 
-    renderMostRead();
-}
+    saveComments();
 
-function closeArticle() {
-    const modal = $("#articleModal");
+    if (nameInput) nameInput.value = "";
+    if (textInput) textInput.value = "";
 
-    if (!modal) return;
+    renderComments(currentArticleId);
 
-    modal.classList.remove("open");
-    document.body.classList.remove("modal-open");
-
-    delete modal.dataset.currentArticle;
-}
-
-/* =========================
-   SHARING
-========================= */
-
-function getShareURL() {
-    const modal = $("#articleModal");
-
-    const id =
-        modal?.dataset.currentArticle;
-
-    if (!id) {
-        return window.location.href;
-    }
-
-    return `${window.location.origin}${window.location.pathname}?article=${encodeURIComponent(id)}`;
-}
-
-function setupSharing() {
-    const whatsapp = $("#shareWhatsApp");
-    const facebook = $("#shareFacebook");
-    const native = $("#shareNative");
-
-    if (whatsapp) {
-        whatsapp.addEventListener("click", () => {
-            const modal = $("#articleModal");
-            const article = getArticle(
-                modal?.dataset.currentArticle
-            );
-
-            if (!article) return;
-
-            const text =
-                `${article.title}\n\nRead more on VimBuzz`;
-
-            const url =
-                `https://wa.me/?text=${encodeURIComponent(
-                    text + "\n" + getShareURL()
-                )}`;
-
-            window.open(url, "_blank");
-        });
-    }
-
-    if (facebook) {
-        facebook.addEventListener("click", () => {
-            const url =
-                `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                    getShareURL()
-                )}`;
-
-            window.open(
-                url,
-                "_blank",
-                "width=600,height=500"
-            );
-        });
-    }
-
-    if (native) {
-        native.addEventListener("click", async () => {
-            const modal = $("#articleModal");
-
-            const article = getArticle(
-                modal?.dataset.currentArticle
-            );
-
-            if (!article) return;
-
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: article.title,
-                        text: article.excerpt,
-                        url: getShareURL()
-                    });
-                } catch (error) {
-                    console.log("Share cancelled.");
-                }
-            } else {
-                try {
-                    await navigator.clipboard.writeText(
-                        getShareURL()
-                    );
-
-                    showToast(
-                        "Article link copied!"
-                    );
-                } catch {
-                    showToast(
-                        "Sharing is not supported on this browser."
-                    );
-                }
-            }
-        });
-    }
-}
-
-/* =========================
-   EDITOR
-========================= */
-
-function openEditor(article = null) {
-    const editor = $("#articleEditor");
-
-    if (!editor) return;
-
-    editor.style.display = "block";
-
-    const form = $("#articleForm");
-
-    if (!form) return;
+    const article = getArticle(currentArticleId);
 
     if (article) {
-        $("#editorTitle").textContent =
-            "Edit Article";
-
-        $("#articleId").value =
-            article.id;
-
-        $("#articleTitle").value =
-            article.title || "";
-
-        $("#articleCategory").value =
-            article.category || "News";
-
-        $("#articleAuthor").value =
-            article.author || "";
-
-        $("#articleImage").value =
-            article.image || "";
-
-        $("#articleExcerpt").value =
-            article.excerpt || "";
-
-        $("#articleContent").value =
-            article.content || "";
-
-        $("#articleFeatured").checked =
-            !!article.featured;
-
-        $("#articleTrending").checked =
-            !!article.trending;
-    } else {
-        $("#editorTitle").textContent =
-            "Create New Article";
-
-        form.reset();
-
-        $("#articleId").value = "";
+      addNotification(
+        "New comment",
+        `A comment was added to "${article.title}".`
+      );
     }
 
-    editor.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
+    toast("Comment posted 💬");
+    renderDashboard();
+  }
+
+  function likeComment(commentId) {
+    if (!currentArticleId) return;
+
+    const list = getComments(currentArticleId);
+
+    const comment = list.find(
+      item => item.id === commentId
+    );
+
+    if (!comment) return;
+
+    comment.likes = Number(comment.likes || 0) + 1;
+
+    saveComments();
+    renderComments(currentArticleId);
+  }
+
+  /* =========================================================
+     RELATED ARTICLES
+     ========================================================= */
+
+  function renderRelated(article) {
+    const container = $("#relatedArticles");
+
+    if (!container) return;
+
+    let related = publishedArticles()
+      .filter(
+        item =>
+          item.id !== article.id &&
+          normalizeText(item.category) ===
+            normalizeText(article.category)
+      )
+      .slice(0, 4);
+
+    if (related.length < 4) {
+      related = [
+        ...related,
+        ...publishedArticles().filter(
+          item =>
+            item.id !== article.id &&
+            !related.some(
+              r => r.id === item.id
+            )
+        )
+      ].slice(0, 4);
+    }
+
+    container.innerHTML = related
+      .map(
+        item => `
+          <article
+            class="related-card"
+            data-open-article="${escapeHTML(item.id)}">
+
+            <img
+              src="${escapeHTML(item.image)}"
+              alt="${escapeHTML(item.title)}"
+            >
+
+            <div>
+              <span class="category-tag">
+                ${escapeHTML(item.category)}
+              </span>
+
+              <h4>
+                ${escapeHTML(item.title)}
+              </h4>
+            </div>
+
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  /* =========================================================
+     SHARE
+     ========================================================= */
+
+  function articleURL(article) {
+    return `${location.origin}${location.pathname}?article=${encodeURIComponent(
+      article.id
+    )}`;
+  }
+
+  async function copyArticleLink() {
+    const article = getArticle(currentArticleId);
+
+    if (!article) return;
+
+    const url = articleURL(article);
+
+    try {
+      await navigator.clipboard.writeText(url);
+
+      article.shares =
+        Number(article.shares || 0) + 1;
+
+      saveArticles();
+
+      toast("Article link copied!");
+    } catch {
+      toast("Could not copy link.", "error");
+    }
+  }
+
+  function shareWhatsApp() {
+    const article = getArticle(currentArticleId);
+
+    if (!article) return;
+
+    const url = articleURL(article);
+
+    const text = `${article.title} — ${url}`;
+
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(text)}`,
+      "_blank",
+      "noopener"
+    );
+
+    article.shares =
+      Number(article.shares || 0) + 1;
+
+    saveArticles();
+  }
+
+  function shareFacebook() {
+    const article = getArticle(currentArticleId);
+
+    if (!article) return;
+
+    const url = articleURL(article);
+
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        url
+      )}`,
+      "_blank",
+      "noopener"
+    );
+
+    article.shares =
+      Number(article.shares || 0) + 1;
+
+    saveArticles();
+  }
+
+  async function nativeShare() {
+    const article = getArticle(currentArticleId);
+
+    if (!article) return;
+
+    const url = articleURL(article);
+
+    if (!navigator.share) {
+      await copyArticleLink();
+      return;
+    }
+
+    try {
+      await navigator.share({
+        title: article.title,
+        text: article.excerpt || "",
+        url
+      });
+
+      article.shares =
+        Number(article.shares || 0) + 1;
+
+      saveArticles();
+    } catch {
+      // User cancelled share.
+    }
+  }
+
+  /* =========================================================
+     TEXT TO SPEECH
+     ========================================================= */
+
+  let speechUtterance = null;
+
+  function getArticleText() {
+    const article = getArticle(currentArticleId);
+
+    if (!article) return "";
+
+    const temp = document.createElement("div");
+
+    temp.innerHTML = article.content || "";
+
+    return [
+      article.title,
+      article.excerpt,
+      temp.textContent
+    ]
+      .filter(Boolean)
+      .join(". ");
+  }
+
+  function startSpeech() {
+    if (!("speechSynthesis" in window)) {
+      toast(
+        "Text-to-speech is not supported on this device.",
+        "error"
+      );
+      return;
+    }
+
+    stopSpeech();
+
+    speechUtterance = new SpeechSynthesisUtterance(
+      getArticleText()
+    );
+
+    speechUtterance.rate = 0.95;
+    speechUtterance.pitch = 1;
+    speechUtterance.volume = 1;
+
+    speechSynthesis.speak(speechUtterance);
+
+    toast("Reading article aloud 🔊");
+  }
+
+  function stopSpeech() {
+    if ("speechSynthesis" in window) {
+      speechSynthesis.cancel();
+    }
+
+    speechUtterance = null;
+  }
+
+  /* =========================================================
+     READING PROGRESS
+     ========================================================= */
+
+  function updateReadingProgress() {
+    const progress = $("#readingProgress");
+
+    if (!progress) return;
+
+    const modal = $("#articleModal");
+
+    const scrollElement =
+      $(".modal-dialog", modal) || modal;
+
+    const max =
+      scrollElement.scrollHeight -
+      scrollElement.clientHeight;
+
+    if (max <= 0) {
+      progress.style.width = "0%";
+      return;
+    }
+
+    const percent =
+      (scrollElement.scrollTop / max) * 100;
+
+    progress.style.width =
+      `${Math.min(100, Math.max(0, percent))}%`;
+  }
+
+  function resetReadingProgress() {
+    const progress = $("#readingProgress");
+
+    if (progress) progress.style.width = "0%";
+  }
+
+  /* =========================================================
+     NEWSLETTER
+     ========================================================= */
+
+  function subscribeNewsletter(event) {
+    event.preventDefault();
+
+    const input = $("#newsletterEmail");
+
+    if (!input) return;
+
+    const email = input.value.trim().toLowerCase();
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setNewsletterMessage(
+        "Please enter a valid email address.",
+        "error"
+      );
+      return;
+    }
+
+    if (
+      subscribers.some(
+        subscriber => subscriber.email === email
+      )
+    ) {
+      setNewsletterMessage(
+        "This email is already subscribed.",
+        "info"
+      );
+      return;
+    }
+
+    subscribers.push({
+      id: uid("subscriber"),
+      email,
+      date: new Date().toISOString()
     });
-}
 
-function closeEditor() {
-    const editor = $("#articleEditor");
+    saveSubscribers();
 
-    if (!editor) return;
+    input.value = "";
 
-    editor.style.display = "none";
+    setNewsletterMessage(
+      "You're subscribed! Welcome to VimBuzz.",
+      "success"
+    );
 
-    const form = $("#articleForm");
+    addNotification(
+      "Newsletter subscription",
+      "A new reader subscribed to VimBuzz."
+    );
+  }
 
-    if (form) {
-        form.reset();
+  function setNewsletterMessage(message, type) {
+    const element = $("#newsletterMessage");
+
+    if (!element) return;
+
+    element.textContent = message;
+    element.className =
+      `newsletter-message ${type || ""}`;
+  }
+
+  /* =========================================================
+     DASHBOARD
+     ========================================================= */
+
+  function renderDashboard() {
+    const published = publishedArticles();
+
+    const statArticles = $("#statArticles");
+    const statViews = $("#statViews");
+    const statLikes = $("#statLikes");
+    const statComments = $("#statComments");
+
+    const totalViews = published.reduce(
+      (sum, article) =>
+        sum + Number(article.views || 0),
+      0
+    );
+
+    const totalLikes = published.reduce(
+      (sum, article) =>
+        sum + Number(article.likes || 0),
+      0
+    );
+
+    const totalComments = Object.values(
+      comments
+    ).reduce(
+      (sum, list) =>
+        sum + (Array.isArray(list) ? list.length : 0),
+      0
+    );
+
+    if (statArticles)
+      statArticles.textContent = articles.length;
+
+    if (statViews)
+      statViews.textContent = formatViews(totalViews);
+
+    if (statLikes)
+      statLikes.textContent = formatViews(totalLikes);
+
+    if (statComments)
+      statComments.textContent = formatViews(
+        totalComments
+      );
+
+    renderDashboardAnalytics();
+    renderAdminArticles();
+  }
+
+  function renderDashboardAnalytics() {
+    const mostViewed = [...publishedArticles()].sort(
+      (a, b) =>
+        Number(b.views || 0) -
+        Number(a.views || 0)
+    )[0];
+
+    const mostLiked = [...publishedArticles()].sort(
+      (a, b) =>
+        Number(b.likes || 0) -
+        Number(a.likes || 0)
+    )[0];
+
+    const viewedTitle = $("#mostViewedTitle");
+    const viewedViews = $("#mostViewedViews");
+
+    const likedTitle = $("#mostLikedTitle");
+    const likedLikes = $("#mostLikedLikes");
+
+    if (viewedTitle) {
+      viewedTitle.textContent =
+        mostViewed?.title || "No data";
     }
 
-    const id = $("#articleId");
-
-    if (id) {
-        id.value = "";
-    }
-}
-
-function setupEditor() {
-    const newButton = $("#newArticleBtn");
-    const closeButton = $("#closeEditorBtn");
-    const cancelButton = $("#cancelEditorBtn");
-    const form = $("#articleForm");
-
-    if (newButton) {
-        newButton.addEventListener(
-            "click",
-            () => openEditor()
-        );
+    if (viewedViews) {
+      viewedViews.textContent =
+        mostViewed
+          ? `${formatViews(mostViewed.views)} views`
+          : "0 views";
     }
 
-    if (closeButton) {
-        closeButton.addEventListener(
-            "click",
-            closeEditor
-        );
+    if (likedTitle) {
+      likedTitle.textContent =
+        mostLiked?.title || "No data";
     }
 
-    if (cancelButton) {
-        cancelButton.addEventListener(
-            "click",
-            closeEditor
-        );
+    if (likedLikes) {
+      likedLikes.textContent =
+        mostLiked
+          ? `${formatViews(mostLiked.likes)} likes`
+          : "0 likes";
     }
+  }
 
-    if (!form) return;
+  /* =========================================================
+     ADMIN ARTICLE LIST
+     ========================================================= */
 
-    form.addEventListener("submit", event => {
-        event.preventDefault();
-
-        const title =
-            $("#articleTitle")?.value.trim();
-
-        const category =
-            $("#articleCategory")?.value;
-
-        const author =
-            $("#articleAuthor")?.value.trim();
-
-        const image =
-            $("#articleImage")?.value.trim();
-
-        const excerpt =
-            $("#articleExcerpt")?.value.trim();
-
-        const content =
-            $("#articleContent")?.value.trim();
-
-        if (!title || !excerpt || !content) {
-            showToast(
-                "Please fill in the required fields."
-            );
-
-            return;
-        }
-
-        const articleId =
-            $("#articleId")?.value;
-
-        const articles = getArticles();
-
-        if (articleId) {
-            const index = articles.findIndex(
-                article =>
-                    String(article.id) ===
-                    String(articleId)
-            );
-
-            if (index !== -1) {
-                articles[index] = {
-                    ...articles[index],
-                    title,
-                    category,
-                    author: author || "VimBuzz",
-                    image: image || FALLBACK_IMAGE,
-                    excerpt,
-                    content,
-                    featured:
-                        $("#articleFeatured")?.checked || false,
-                    trending:
-                        $("#articleTrending")?.checked || false
-                };
-
-                saveArticles(articles);
-
-                showToast(
-                    "Article updated successfully!"
-                );
-            }
-        } else {
-            const newArticle = {
-                id:
-                    "vb-" +
-                    Date.now() +
-                    "-" +
-                    Math.random()
-                        .toString(36)
-                        .slice(2, 8),
-
-                title,
-                category,
-                author: author || "VimBuzz",
-                image: image || FALLBACK_IMAGE,
-                excerpt,
-                content,
-                featured:
-                    $("#articleFeatured")?.checked || false,
-                trending:
-                    $("#articleTrending")?.checked || false,
-                views: 0,
-                createdAt:
-                    new Date().toISOString()
-            };
-
-            articles.unshift(newArticle);
-
-            saveArticles(articles);
-
-            showToast(
-                "Article published successfully!"
-            );
-        }
-
-        closeEditor();
-        renderAll();
-    });
-}
-
-/* =========================
-   ADMIN ARTICLE LIST
-========================= */
-
-function renderAdminArticles() {
+  function renderAdminArticles() {
     const container = $("#adminArticlesList");
     const count = $("#articleCount");
 
     if (!container) return;
 
-    const articles = sortNewest(getArticles());
-
     if (count) {
-        count.textContent =
-            `${articles.length} article${articles.length === 1 ? "" : "s"}`;
+      count.textContent =
+        `${articles.length} article${
+          articles.length === 1 ? "" : "s"
+        }`;
     }
 
-    if (!articles.length) {
-        container.innerHTML =
-            `<p class="empty-state">No articles yet.</p>`;
+    const list = sortedNewest(articles);
 
-        return;
-    }
+    container.innerHTML = list
+      .map(
+        article => `
+          <article class="admin-article">
 
-    container.innerHTML = articles
-        .map(article => `
-            <div
-                class="admin-article"
-                data-admin-id="${escapeHTML(article.id)}"
+            <img
+              class="admin-article-image"
+              src="${escapeHTML(article.image)}"
+              alt="${escapeHTML(article.title)}"
             >
-                <img
-                    class="admin-article-image"
-                    src="${escapeHTML(article.image || FALLBACK_IMAGE)}"
-                    alt=""
-                    onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
-                >
 
-                <div class="admin-article-info">
-                    <strong>
-                        ${escapeHTML(article.title)}
-                    </strong>
+            <div class="admin-article-info">
 
-                    <span>
-                        ${escapeHTML(article.category)}
-                    </span>
+              <span class="category-tag">
+                ${escapeHTML(article.category)}
+              </span>
 
-                    <small>
-                        ${formatDate(article.createdAt)}
-                        •
-                        ${formatViews(article.views)} views
-                    </small>
-                </div>
+              <h3>
+                ${escapeHTML(article.title)}
+              </h3>
 
-                <div class="admin-actions">
+              <p>
+                ${escapeHTML(
+                  article.author || "VimBuzz"
+                )}
+                •
+                ${formatDate(
+                  article.updatedAt || article.date
+                )}
+              </p>
 
-                    <button
-                        class="admin-action-btn"
-                        type="button"
-                        data-edit-id="${escapeHTML(article.id)}"
-                    >
-                        Edit
-                    </button>
+              <small>
+                ${formatViews(article.views)} views
+                •
+                ${formatViews(article.likes)} likes
+                •
+                ${article.status || "published"}
+              </small>
 
-                    <button
-                        class="admin-action-btn admin-delete"
-                        type="button"
-                        data-delete-id="${escapeHTML(article.id)}"
-                    >
-                        Delete
-                    </button>
-
-                </div>
             </div>
-        `)
-        .join("");
-}
 
-function deleteArticle(id) {
+            <div class="admin-actions">
+
+              <button
+                class="admin-action-btn"
+                type="button"
+                data-edit-article="${escapeHTML(article.id)}">
+                Edit
+              </button>
+
+              <button
+                class="admin-action-btn"
+                type="button"
+                data-toggle-status="${escapeHTML(article.id)}">
+                ${
+                  article.status === "draft"
+                    ? "Publish"
+                    : "Draft"
+                }
+              </button>
+
+              <button
+                class="admin-action-btn"
+                type="button"
+                data-toggle-featured="${escapeHTML(article.id)}">
+                ${
+                  article.featured
+                    ? "Unfeature"
+                    : "Feature"
+                }
+              </button>
+
+              <button
+                class="admin-action-btn admin-delete"
+                type="button"
+                data-delete-article="${escapeHTML(article.id)}">
+                Delete
+              </button>
+
+            </div>
+
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  /* =========================================================
+     EDITOR
+     ========================================================= */
+
+  function openEditor(article = null) {
+    const editor = $("#articleEditor");
+
+    if (!editor) return;
+
+    editor.hidden = false;
+
+    const id = $("#articleId");
+    const title = $("#articleTitle");
+    const category = $("#articleCategory");
+    const author = $("#articleAuthor");
+    const image = $("#articleImage");
+    const excerpt = $("#articleExcerpt");
+    const content = $("#articleContent");
+    const featured = $("#articleFeatured");
+    const trending = $("#articleTrending");
+
+    if (article) {
+      if (id) id.value = article.id;
+      if (title) title.value = article.title || "";
+      if (category) category.value = article.category || "News";
+      if (author) author.value = article.author || "";
+      if (image) image.value = article.image || "";
+      if (excerpt) excerpt.value = article.excerpt || "";
+      if (content) content.value = stripHTML(article.content || "");
+      if (featured) featured.checked = !!article.featured;
+      if (trending) trending.checked = !!article.trending;
+    } else {
+      if (id) id.value = "";
+      if (title) title.value = "";
+      if (category) category.value = "News";
+      if (author) author.value = "";
+      if (image) image.value = "";
+      if (excerpt) excerpt.value = "";
+      if (content) content.value = "";
+      if (featured) featured.checked = false;
+      if (trending) trending.checked = false;
+    }
+
+    editor.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  function stripHTML(html) {
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+    return temp.textContent || "";
+  }
+
+  function closeEditor() {
+    const editor = $("#articleEditor");
+
+    if (editor) editor.hidden = true;
+  }
+
+  function saveArticleFromForm(event) {
+    event.preventDefault();
+
+    const id = $("#articleId")?.value.trim();
+    const title = $("#articleTitle")?.value.trim();
+    const category =
+      $("#articleCategory")?.value.trim() || "News";
+    const author =
+      $("#articleAuthor")?.value.trim() || "VimBuzz Newsroom";
+    const image =
+      $("#articleImage")?.value.trim() ||
+      "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80";
+    const excerpt =
+      $("#articleExcerpt")?.value.trim() || "";
+    const content =
+      $("#articleContent")?.value.trim() || "";
+    const featured =
+      $("#articleFeatured")?.checked || false;
+    const trending =
+      $("#articleTrending")?.checked || false;
+
+    if (!title) {
+      toast("Article title is required.", "error");
+      return;
+    }
+
+    if (!content) {
+      toast("Article content is required.", "error");
+      return;
+    }
+
+    if (id) {
+      const article = getArticle(id);
+
+      if (!article) {
+        toast("Article not found.", "error");
+        return;
+      }
+
+      article.title = title;
+      article.category = category;
+      article.author = author;
+      article.image = image;
+      article.excerpt = excerpt;
+      article.content = formatEditorContent(content);
+      article.featured = featured;
+      article.trending = trending;
+      article.updatedAt = new Date().toISOString();
+
+      toast("Article updated successfully.");
+    } else {
+      const article = {
+        id: uid("article"),
+        title,
+        category,
+        author,
+        image,
+        excerpt,
+        content: formatEditorContent(content),
+        tags: title
+          .split(" ")
+          .filter(word => word.length > 4)
+          .slice(0, 5),
+        date: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        views: 0,
+        likes: 0,
+        shares: 0,
+        rating: 5,
+        featured,
+        trending,
+        pinned: false,
+        sponsored: false,
+        status: "published"
+      };
+
+      articles.unshift(article);
+
+      addNotification(
+        "New article published",
+        title
+      );
+
+      toast("Article published successfully!");
+    }
+
+    saveArticles();
+
+    closeEditor();
+    renderAll();
+  }
+
+  function formatEditorContent(text) {
+    return String(text)
+      .split(/\n{2,}/)
+      .map(
+        paragraph =>
+          `<p>${escapeHTML(paragraph).replace(
+            /\n/g,
+            "<br>"
+          )}</p>`
+      )
+      .join("");
+  }
+
+  /* =========================================================
+     ARTICLE MANAGEMENT
+     ========================================================= */
+
+  function deleteArticle(id) {
     const article = getArticle(id);
 
     if (!article) return;
 
     const confirmed = confirm(
-        `Delete "${article.title}"?`
+      `Delete "${article.title}"?`
     );
 
     if (!confirmed) return;
 
-    const articles =
-        getArticles().filter(
-            item =>
-                String(item.id) !== String(id)
-        );
+    articles = articles.filter(
+      item => item.id !== id
+    );
 
-    saveArticles(articles);
+    delete likes[id];
+
+    bookmarks = bookmarks.filter(
+      bookmark => bookmark !== id
+    );
+
+    delete comments[id];
+
+    saveArticles();
+    saveLikes();
+    saveBookmarks();
+    saveComments();
+
+    toast("Article deleted.", "info");
 
     renderAll();
+  }
 
-    showToast(
-        "Article deleted."
+  function toggleStatus(id) {
+    const article = getArticle(id);
+
+    if (!article) return;
+
+    article.status =
+      article.status === "draft"
+        ? "published"
+        : "draft";
+
+    article.updatedAt = new Date().toISOString();
+
+    saveArticles();
+
+    toast(
+      article.status === "published"
+        ? "Article published."
+        : "Article moved to drafts.",
+      "info"
     );
-}
 
-/* =========================
-   NEWSLETTER
-========================= */
+    renderAll();
+  }
 
-function setupNewsletter() {
-    const form = $("#newsletterForm");
-    const input = $("#newsletterEmail");
-    const message = $("#newsletterMessage");
+  function toggleFeatured(id) {
+    const article = getArticle(id);
 
-    if (!form || !input) return;
+    if (!article) return;
 
-    form.addEventListener("submit", event => {
-        event.preventDefault();
+    article.featured = !article.featured;
 
-        const email =
-            input.value.trim().toLowerCase();
+    saveArticles();
 
-        if (!email || !email.includes("@")) {
-            if (message) {
-                message.textContent =
-                    "Enter a valid email address.";
-            }
-
-            return;
-        }
-
-        let subscribers = [];
-
-        try {
-            subscribers =
-                JSON.parse(
-                    localStorage.getItem(
-                        SUBSCRIBER_KEY
-                    )
-                ) || [];
-        } catch {
-            subscribers = [];
-        }
-
-        if (!subscribers.includes(email)) {
-            subscribers.push(email);
-
-            localStorage.setItem(
-                SUBSCRIBER_KEY,
-                JSON.stringify(subscribers)
-            );
-
-            if (message) {
-                message.textContent =
-                    "You're subscribed to VimBuzz!";
-            }
-
-            showToast(
-                "Newsletter subscription saved."
-            );
-        } else {
-            if (message) {
-                message.textContent =
-                    "You're already subscribed.";
-            }
-        }
-
-        input.value = "";
-    });
-}
-
-/* =========================
-   GLOBAL CLICKS
-========================= */
-
-function setupGlobalEvents() {
-    document.addEventListener("click", event => {
-
-        /* Article */
-        const articleTarget =
-            event.target.closest(
-                "[data-article-id]"
-            );
-
-        if (
-            articleTarget &&
-            !event.target.closest("button")
-        ) {
-            const id =
-                articleTarget.dataset.articleId;
-
-            openArticle(id);
-
-            return;
-        }
-
-        /* Trending */
-        const trending =
-            event.target.closest(
-                ".trending-item[data-article-id]"
-            );
-
-        if (trending) {
-            openArticle(
-                trending.dataset.articleId
-            );
-
-            return;
-        }
-
-        /* Edit */
-        const edit =
-            event.target.closest(
-                "[data-edit-id]"
-            );
-
-        if (edit) {
-            const article =
-                getArticle(
-                    edit.dataset.editId
-                );
-
-            if (article) {
-                openEditor(article);
-            }
-
-            return;
-        }
-
-        /* Delete */
-        const remove =
-            event.target.closest(
-                "[data-delete-id]"
-            );
-
-        if (remove) {
-            deleteArticle(
-                remove.dataset.deleteId
-            );
-
-            return;
-        }
-    });
-}
-
-/* =========================
-   MODAL EVENTS
-========================= */
-
-function setupModal() {
-    const modal = $("#articleModal");
-    const overlay = $("#modalOverlay");
-    const closeButton = $("#closeModal");
-
-    if (overlay) {
-        overlay.addEventListener(
-            "click",
-            closeArticle
-        );
-    }
-
-    if (closeButton) {
-        closeButton.addEventListener(
-            "click",
-            closeArticle
-        );
-    }
-
-    document.addEventListener(
-        "keydown",
-        event => {
-            if (event.key === "Escape") {
-                closeArticle();
-            }
-
-            if (
-                event.key === "Enter" &&
-                event.target.matches(
-                    "[data-article-id]"
-                )
-            ) {
-                openArticle(
-                    event.target.dataset.articleId
-                );
-            }
-        }
+    toast(
+      article.featured
+        ? "Article featured."
+        : "Article removed from featured.",
+      "info"
     );
-}
 
-/* =========================
-   CATEGORY NAVIGATION
-========================= */
+    renderAll();
+  }
 
-function setupCategoryLinks() {
-    const mapping = {
-        news: "latestArticles",
-        sports: "sportsArticles",
-        entertainment: "entertainmentArticles",
-        technology: "technologyArticles",
-        lifestyle: "lifestyleArticles"
+  function togglePinned(id) {
+    const article = getArticle(id);
+
+    if (!article) return;
+
+    articles.forEach(item => {
+      item.pinned = false;
+    });
+
+    article.pinned = true;
+
+    saveArticles();
+
+    renderBreakingNews();
+
+    toast("Article pinned as breaking news.");
+  }
+
+  /* =========================================================
+     IMPORT / EXPORT
+     ========================================================= */
+
+  function exportData() {
+    const data = {
+      version: 4,
+      exportedAt: new Date().toISOString(),
+      articles,
+      likes,
+      bookmarks,
+      comments,
+      subscribers,
+      notifications,
+      searches,
+      settings
     };
 
-    $all(
-        "a[href], button[data-category]"
-    ).forEach(element => {
-        element.addEventListener("click", event => {
+    const blob = new Blob(
+      [JSON.stringify(data, null, 2)],
+      { type: "application/json" }
+    );
 
-            const category =
-                element.dataset.category ||
-                element.getAttribute("href");
+    const url = URL.createObjectURL(blob);
 
-            if (!category) return;
+    const link = document.createElement("a");
 
-            const clean =
-                category
-                    .replace("#", "")
-                    .replace("/", "")
-                    .toLowerCase();
+    link.href = url;
+    link.download = `vimbuzz-backup-${new Date()
+      .toISOString()
+      .slice(0, 10)}.json`;
 
-            if (!mapping[clean]) return;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 
-            const target =
-                document.getElementById(
-                    mapping[clean]
-                );
+    URL.revokeObjectURL(url);
 
-            if (target) {
-                event.preventDefault();
+    toast("Backup exported successfully.");
+  }
 
-                target.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-            }
-        });
+  function importData(file) {
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = event => {
+      try {
+        const data = JSON.parse(
+          event.target.result
+        );
+
+        if (
+          !data ||
+          !Array.isArray(data.articles)
+        ) {
+          throw new Error("Invalid backup");
+        }
+
+        articles = data.articles;
+        likes = data.likes || {};
+        bookmarks = data.bookmarks || [];
+        comments = data.comments || {};
+        subscribers = data.subscribers || [];
+        notifications = data.notifications || [];
+        searches = data.searches || [];
+        settings = data.settings || settings;
+
+        saveArticles();
+        saveLikes();
+        saveBookmarks();
+        saveComments();
+        saveSubscribers();
+        saveNotifications();
+        saveSearches();
+        saveSettings();
+
+        applySettings();
+        renderAll();
+
+        toast("Backup imported successfully.");
+      } catch (error) {
+        console.error(error);
+        toast(
+          "Invalid VimBuzz backup file.",
+          "error"
+        );
+      }
+    };
+
+    reader.readAsText(file);
+  }
+
+  /* =========================================================
+     DARK MODE
+     ========================================================= */
+
+  function applyDarkMode() {
+    document.body.classList.toggle(
+      "dark-mode",
+      !!settings.darkMode
+    );
+
+    const button = $("#darkModeBtn");
+
+    if (button) {
+      button.innerHTML = settings.darkMode
+        ? "☀️"
+        : "🌙";
+
+      button.setAttribute(
+        "aria-label",
+        settings.darkMode
+          ? "Switch to light mode"
+          : "Switch to dark mode"
+      );
+    }
+  }
+
+  function toggleDarkMode() {
+    settings.darkMode = !settings.darkMode;
+
+    saveSettings();
+    applyDarkMode();
+
+    toast(
+      settings.darkMode
+        ? "Dark mode enabled."
+        : "Light mode enabled.",
+      "info"
+    );
+  }
+
+  /* =========================================================
+     READING MODE
+     ========================================================= */
+
+  function applyReadingMode() {
+    document.body.classList.toggle(
+      "reading-mode",
+      !!settings.readingMode
+    );
+  }
+
+  function toggleReadingMode() {
+    settings.readingMode = !settings.readingMode;
+
+    saveSettings();
+    applyReadingMode();
+
+    toast(
+      settings.readingMode
+        ? "Reading mode enabled."
+        : "Reading mode disabled.",
+      "info"
+    );
+  }
+
+  /* =========================================================
+     FONT SIZE
+     ========================================================= */
+
+  function applyFontSize() {
+    document.documentElement.dataset.fontSize =
+      settings.fontSize || "normal";
+  }
+
+  function changeFontSize(value) {
+    const sizes = [
+      "small",
+      "normal",
+      "large",
+      "xlarge"
+    ];
+
+    if (!sizes.includes(value)) return;
+
+    settings.fontSize = value;
+
+    saveSettings();
+    applyFontSize();
+  }
+
+  /* =========================================================
+     MOBILE MENU
+     ========================================================= */
+
+  function setupMobileMenu() {
+    const menuBtn = $("#menuBtn");
+    const mobileNav = $("#mobileNav");
+
+    if (!menuBtn || !mobileNav) return;
+
+    menuBtn.addEventListener("click", event => {
+      event.stopPropagation();
+
+      mobileNav.classList.toggle("open");
+
+      menuBtn.setAttribute(
+        "aria-expanded",
+        mobileNav.classList.contains("open")
+      );
     });
-}
 
-/* =========================
-   EXPORT / IMPORT
-========================= */
+    $$(".mobile-nav a", mobileNav).forEach(link => {
+      link.addEventListener("click", () => {
+        mobileNav.classList.remove("open");
+      });
+    });
+  }
 
-function setupImportExport() {
-    const exportButton = $("#exportBtn");
-    const importInput = $("#importFile");
+  /* =========================================================
+     SEARCH UI
+     ========================================================= */
 
-    if (exportButton) {
-        exportButton.addEventListener(
-            "click",
-            () => {
-                const articles =
-                    getArticles();
+  function setupSearch() {
+    const searchBtn = $("#searchBtn");
+    const searchBox = $("#searchBox");
+    const searchForm = $("#searchForm");
+    const searchInput = $("#searchInput");
 
-                const blob =
-                    new Blob(
-                        [
-                            JSON.stringify(
-                                articles,
-                                null,
-                                2
-                            )
-                        ],
-                        {
-                            type:
-                                "application/json"
-                        }
-                    );
+    if (searchBtn && searchBox) {
+      searchBtn.addEventListener("click", () => {
+        searchBox.classList.toggle("open");
 
-                const url =
-                    URL.createObjectURL(blob);
-
-                const link =
-                    document.createElement("a");
-
-                link.href = url;
-
-                link.download =
-                    "vimbuzz-articles.json";
-
-                document.body.appendChild(link);
-
-                link.click();
-
-                link.remove();
-
-                URL.revokeObjectURL(url);
-
-                showToast(
-                    "Articles exported."
-                );
-            }
-        );
+        if (searchBox.classList.contains("open")) {
+          searchInput?.focus();
+        }
+      });
     }
 
-    if (importInput) {
-        importInput.addEventListener(
-            "change",
-            event => {
-                const file =
-                    event.target.files[0];
+    if (searchForm) {
+      searchForm.addEventListener(
+        "submit",
+        event => {
+          event.preventDefault();
 
-                if (!file) return;
-
-                const reader =
-                    new FileReader();
-
-                reader.onload = () => {
-                    try {
-                        const imported =
-                            JSON.parse(
-                                reader.result
-                            );
-
-                        if (
-                            !Array.isArray(
-                                imported
-                            )
-                        ) {
-                            throw new Error(
-                                "Invalid file"
-                            );
-                        }
-
-                        const confirmed =
-                            confirm(
-                                "Import these articles and replace your current articles?"
-                            );
-
-                        if (!confirmed) {
-                            return;
-                        }
-
-                        saveArticles(
-                            imported
-                        );
-
-                        renderAll();
-
-                        showToast(
-                            "Articles imported."
-                        );
-
-                    } catch (error) {
-                        console.error(
-                            error
-                        );
-
-                        showToast(
-                            "Invalid JSON file."
-                        );
-                    }
-
-                    importInput.value = "";
-                };
-
-                reader.readAsText(file);
-            }
-        );
+          performSearch(
+            searchInput?.value || ""
+          );
+        }
+      );
     }
-}
 
-/* =========================
-   TOAST
-========================= */
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        renderSearchSuggestions(
+          searchInput.value
+        );
+      });
+    }
+  }
 
-let toastTimer;
+  /* =========================================================
+     NAVIGATION
+     ========================================================= */
 
-function showToast(message) {
-    const toast = $("#toast");
+  function setupNavigation() {
+    $$("[data-category]").forEach(button => {
+      button.addEventListener("click", () => {
+        const category = button.dataset.category;
 
-    if (!toast) {
-        alert(message);
+        const sectionId =
+          category === "News"
+            ? "news"
+            : category.toLowerCase();
+
+        document
+          .getElementById(sectionId)
+          ?.scrollIntoView({
+            behavior: "smooth"
+          });
+      });
+    });
+
+    $$('a[href^="#"]').forEach(link => {
+      link.addEventListener("click", event => {
+        const href = link.getAttribute("href");
+
+        if (!href || href === "#") return;
+
+        const target = $(href);
+
+        if (target) {
+          event.preventDefault();
+
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
+      });
+    });
+  }
+
+  /* =========================================================
+     GLOBAL CLICK HANDLER
+     ========================================================= */
+
+  function setupGlobalClicks() {
+    document.addEventListener("click", event => {
+      const openButton =
+        event.target.closest(
+          "[data-open-article]"
+        );
+
+      if (openButton) {
+        const id =
+          openButton.dataset.openArticle;
+
+        if (id) {
+          openArticle(id);
+          return;
+        }
+      }
+
+      const likeButton =
+        event.target.closest(
+          "[data-like]"
+        );
+
+      if (likeButton) {
+        toggleLike(
+          likeButton.dataset.like
+        );
         return;
-    }
+      }
 
-    toast.textContent = message;
+      const bookmarkButton =
+        event.target.closest(
+          "[data-bookmark]"
+        );
 
-    toast.classList.add("show");
+      if (bookmarkButton) {
+        toggleBookmark(
+          bookmarkButton.dataset.bookmark
+        );
+        return;
+      }
 
-    clearTimeout(toastTimer);
+      const removeBookmark =
+        event.target.closest(
+          "[data-remove-bookmark]"
+        );
 
-    toastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-    }, 3000);
-}
+      if (removeBookmark) {
+        toggleBookmark(
+          removeBookmark.dataset.removeBookmark
+        );
+        return;
+      }
 
-/* =========================
-   SCROLL TOP
-========================= */
+      const commentLike =
+        event.target.closest(
+          "[data-comment-like]"
+        );
 
-function setupScrollTop() {
+      if (commentLike) {
+        likeComment(
+          commentLike.dataset.commentLike
+        );
+        return;
+      }
+
+      const suggestion =
+        event.target.closest(
+          "[data-search-suggestion]"
+        );
+
+      if (suggestion) {
+        const value =
+          suggestion.dataset.searchSuggestion;
+
+        const input = $("#searchInput");
+
+        if (input) input.value = value;
+
+        performSearch(value);
+        return;
+      }
+
+      const edit =
+        event.target.closest(
+          "[data-edit-article]"
+        );
+
+      if (edit) {
+        const article = getArticle(
+          edit.dataset.editArticle
+        );
+
+        if (article) openEditor(article);
+
+        return;
+      }
+
+      const del =
+        event.target.closest(
+          "[data-delete-article]"
+        );
+
+      if (del) {
+        deleteArticle(
+          del.dataset.deleteArticle
+        );
+        return;
+      }
+
+      const status =
+        event.target.closest(
+          "[data-toggle-status]"
+        );
+
+      if (status) {
+        toggleStatus(
+          status.dataset.toggleStatus
+        );
+        return;
+      }
+
+      const feature =
+        event.target.closest(
+          "[data-toggle-featured]"
+        );
+
+      if (feature) {
+        toggleFeatured(
+          feature.dataset.toggleFeatured
+        );
+        return;
+      }
+
+      const pin =
+        event.target.closest(
+          "[data-pin-article]"
+        );
+
+      if (pin) {
+        togglePinned(
+          pin.dataset.pinArticle
+        );
+        return;
+      }
+    });
+  }
+
+  /* =========================================================
+     MODAL EVENTS
+     ========================================================= */
+
+  function setupModal() {
+    const modal = $("#articleModal");
+    const close = $("#closeModal");
+    const overlay = $("#modalOverlay");
+
+    close?.addEventListener(
+      "click",
+      closeArticle
+    );
+
+    overlay?.addEventListener(
+      "click",
+      closeArticle
+    );
+
+    modal?.addEventListener(
+      "scroll",
+      updateReadingProgress
+    );
+
+    const dialog = $(".modal-dialog", modal);
+
+    dialog?.addEventListener(
+      "scroll",
+      updateReadingProgress
+    );
+
+    $("#likeArticleBtn")?.addEventListener(
+      "click",
+      () => {
+        if (currentArticleId)
+          toggleLike(currentArticleId);
+      }
+    );
+
+    $("#bookmarkArticleBtn")?.addEventListener(
+      "click",
+      () => {
+        if (currentArticleId)
+          toggleBookmark(currentArticleId);
+      }
+    );
+
+    $("#copyArticleBtn")?.addEventListener(
+      "click",
+      copyArticleLink
+    );
+
+    $("#shareWhatsApp")?.addEventListener(
+      "click",
+      shareWhatsApp
+    );
+
+    $("#shareFacebook")?.addEventListener(
+      "click",
+      shareFacebook
+    );
+
+    $("#shareNative")?.addEventListener(
+      "click",
+      nativeShare
+    );
+
+    $("#readArticleBtn")?.addEventListener(
+      "click",
+      startSpeech
+    );
+
+    $("#stopReadingBtn")?.addEventListener(
+      "click",
+      stopSpeech
+    );
+
+    $("#commentForm")?.addEventListener(
+      "submit",
+      submitComment
+    );
+  }
+
+  /* =========================================================
+     DASHBOARD EVENTS
+     ========================================================= */
+
+  function setupDashboard() {
+    $("#newArticleBtn")?.addEventListener(
+      "click",
+      () => openEditor()
+    );
+
+    $("#closeEditorBtn")?.addEventListener(
+      "click",
+      closeEditor
+    );
+
+    $("#cancelEditorBtn")?.addEventListener(
+      "click",
+      closeEditor
+    );
+
+    $("#articleForm")?.addEventListener(
+      "submit",
+      saveArticleFromForm
+    );
+
+    $("#exportBtn")?.addEventListener(
+      "click",
+      exportData
+    );
+
+    $("#importFile")?.addEventListener(
+      "change",
+      event => {
+        importData(event.target.files[0]);
+        event.target.value = "";
+      }
+    );
+  }
+
+  /* =========================================================
+     SAVED EVENTS
+     ========================================================= */
+
+  function setupSaved() {
+    createSavedButton();
+
+    $("#savedBtn")?.addEventListener(
+      "click",
+      openSavedPanel
+    );
+
+    $("#closeSavedBtn")?.addEventListener(
+      "click",
+      closeSavedPanel
+    );
+
+    $("#savedOverlay")?.addEventListener(
+      "click",
+      closeSavedPanel
+    );
+  }
+
+  /* =========================================================
+     BREAKING CLOSE
+     ========================================================= */
+
+  function setupBreaking() {
+    $("#breakingClose")?.addEventListener(
+      "click",
+      () => {
+        const bar = $("#breakingBar");
+
+        if (bar) bar.hidden = true;
+      }
+    );
+  }
+
+  /* =========================================================
+     SETTINGS PANEL
+     ========================================================= */
+
+  function setupSettings() {
+    $$("[data-font-size]").forEach(button => {
+      button.addEventListener("click", () => {
+        changeFontSize(
+          button.dataset.fontSize
+        );
+      });
+    });
+
+    $("[data-reading-mode]")?.addEventListener(
+      "click",
+      toggleReadingMode
+    );
+  }
+
+  /* =========================================================
+     SCROLL TOP
+     ========================================================= */
+
+  function setupScrollTop() {
     const button = $("#scrollTop");
 
     if (!button) return;
 
     window.addEventListener(
-        "scroll",
-        () => {
-            if (window.scrollY > 500) {
-                button.classList.add("show");
-            } else {
-                button.classList.remove("show");
-            }
-        }
+      "scroll",
+      () => {
+        button.classList.toggle(
+          "show",
+          window.scrollY > 500
+        );
+      },
+      { passive: true }
     );
 
-    button.addEventListener(
-        "click",
-        () => {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        }
+    button.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+  }
+
+  /* =========================================================
+     NEWSLETTER
+     ========================================================= */
+
+  function setupNewsletter() {
+    $("#newsletterForm")?.addEventListener(
+      "submit",
+      subscribeNewsletter
     );
-}
+  }
 
-/* =========================
-   YEAR
-========================= */
+  /* =========================================================
+     DARK MODE BUTTON
+     ========================================================= */
 
-function setupYear() {
+  function setupDarkMode() {
+    $("#darkModeBtn")?.addEventListener(
+      "click",
+      toggleDarkMode
+    );
+  }
+
+  /* =========================================================
+     KEYBOARD
+     ========================================================= */
+
+  function setupKeyboard() {
+    document.addEventListener(
+      "keydown",
+      event => {
+        if (event.key === "Escape") {
+          closeArticle();
+          closeSavedPanel();
+
+          const mobileNav = $("#mobileNav");
+
+          if (mobileNav) {
+            mobileNav.classList.remove(
+              "open"
+            );
+          }
+        }
+
+        if (
+          event.key === "/" &&
+          !["INPUT", "TEXTAREA"].includes(
+            document.activeElement?.tagName
+          )
+        ) {
+          event.preventDefault();
+
+          $("#searchBox")?.classList.add(
+            "open"
+          );
+
+          $("#searchInput")?.focus();
+        }
+      }
+    );
+  }
+
+  /* =========================================================
+     ONLINE / OFFLINE
+     ========================================================= */
+
+  function setupConnectionStatus() {
+    function update() {
+      const status = $("#connectionStatus");
+
+      if (!status) return;
+
+      status.textContent = navigator.onLine
+        ? "Online"
+        : "Offline";
+
+      status.classList.toggle(
+        "offline",
+        !navigator.onLine
+      );
+    }
+
+    window.addEventListener(
+      "online",
+      () => {
+        update();
+        toast("You're back online.");
+      }
+    );
+
+    window.addEventListener(
+      "offline",
+      () => {
+        update();
+        toast(
+          "You're offline. VimBuzz is still available locally.",
+          "info"
+        );
+      }
+    );
+
+    update();
+  }
+
+  /* =========================================================
+     IMAGE FALLBACK
+     ========================================================= */
+
+  function setupImages() {
+    document.addEventListener(
+      "error",
+      event => {
+        if (
+          event.target.tagName === "IMG" &&
+          !event.target.dataset.fallback
+        ) {
+          event.target.dataset.fallback = "true";
+
+          event.target.src =
+            "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=900&q=80";
+        }
+      },
+      true
+    );
+  }
+
+  /* =========================================================
+     PWA
+     ========================================================= */
+
+  async function setupPWA() {
+    if (!("serviceWorker" in navigator)) return;
+
+    try {
+      await navigator.serviceWorker.register(
+        "sw.js"
+      );
+    } catch (error) {
+      console.log(
+        "PWA service worker not available yet."
+      );
+    }
+  }
+
+  /* =========================================================
+     PAGE LOADER
+     ========================================================= */
+
+  function hideLoader() {
+    const loader = $(".page-loader");
+
+    if (!loader) return;
+
+    loader.classList.add("hidden");
+
+    setTimeout(() => {
+      loader.remove();
+    }, 600);
+  }
+
+  /* =========================================================
+     YEAR
+     ========================================================= */
+
+  function updateYear() {
     const year = $("#currentYear");
 
     if (year) {
-        year.textContent =
-            new Date().getFullYear();
+      year.textContent =
+        new Date().getFullYear();
     }
-}
 
-/* =========================
-   URL ARTICLE
-========================= */
+    $$("[data-current-year]").forEach(el => {
+      el.textContent =
+        new Date().getFullYear();
+    });
+  }
 
-function openArticleFromURL() {
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+  /* =========================================================
+     ACTIVE NAV
+     ========================================================= */
 
-    const articleId =
-        params.get("article");
+  function setupActiveNavigation() {
+    const sections = $$(
+      "main section[id]"
+    );
 
-    if (!articleId) return;
+    const links = $$(
+      '.desktop-nav a[href^="#"], .mobile-nav a[href^="#"]'
+    );
+
+    if (!sections.length || !links.length)
+      return;
+
+    const observer =
+      new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting)
+              return;
+
+            links.forEach(link => {
+              link.classList.toggle(
+                "active",
+                link.getAttribute("href") ===
+                  `#${entry.target.id}`
+              );
+            });
+          });
+        },
+        {
+          rootMargin:
+            "-100px 0px -60% 0px"
+        }
+      );
+
+    sections.forEach(section =>
+      observer.observe(section)
+    );
+  }
+
+  /* =========================================================
+     ARTICLE URL
+     ========================================================= */
+
+  function checkArticleURL() {
+    const params = new URLSearchParams(
+      location.search
+    );
+
+    const id = params.get("article");
+
+    if (!id) return;
 
     setTimeout(() => {
-        openArticle(articleId);
+      openArticle(id);
     }, 300);
-}
+  }
 
-/* =========================
-   ONLINE / OFFLINE
-========================= */
+  /* =========================================================
+     RENDER ALL
+     ========================================================= */
 
-function setupConnectionStatus() {
-    window.addEventListener(
-        "offline",
-        () => {
-            showToast(
-                "You are offline. VimBuzz is still available."
-            );
-        }
+  function renderAll() {
+    renderBreakingNews();
+    renderTrending();
+    renderHero();
+    renderLatest();
+    renderMostRead();
+
+    renderCategory(
+      "Sports",
+      "#sportsArticles"
     );
 
-    window.addEventListener(
-        "online",
-        () => {
-            showToast(
-                "You are back online."
-            );
-        }
+    renderCategory(
+      "Entertainment",
+      "#entertainmentArticles"
     );
-}
 
-/* =========================
-   DEBUG TOOLS
-========================= */
+    renderCategory(
+      "Technology",
+      "#technologyArticles"
+    );
 
-window.VimBuzz = {
-    getArticles,
-    saveArticles,
-    renderAll,
+    renderCategory(
+      "Lifestyle",
+      "#lifestyleArticles"
+    );
 
-    reset: function () {
-        localStorage.removeItem(
-            STORAGE_KEY
-        );
+    renderDashboard();
+    renderNotifications();
+    renderSavedArticles();
 
-        location.reload();
+    updateSavedBadge();
+    updateYear();
+  }
+
+  /* =========================================================
+     SETTINGS
+     ========================================================= */
+
+  function applySettings() {
+    applyDarkMode();
+    applyReadingMode();
+    applyFontSize();
+  }
+
+  /* =========================================================
+     INITIALIZE
+     ========================================================= */
+
+  function init() {
+    console.log(
+      "%cVimBuzz V4 loaded successfully.",
+      "font-weight:bold;font-size:16px"
+    );
+
+    applySettings();
+
+    setupMobileMenu();
+    setupSearch();
+    setupNavigation();
+    setupGlobalClicks();
+    setupModal();
+    setupDashboard();
+    setupSaved();
+    setupBreaking();
+    setupSettings();
+    setupScrollTop();
+    setupNewsletter();
+    setupDarkMode();
+    setupKeyboard();
+    setupConnectionStatus();
+    setupImages();
+    setupActiveNavigation();
+
+    renderAll();
+
+    setupPWA();
+
+    hideLoader();
+
+    checkArticleURL();
+  }
+
+  /* =========================================================
+     START
+     ========================================================= */
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      init
+    );
+  } else {
+    init();
+  }
+
+  /* =========================================================
+     PUBLIC DEBUG API
+     ========================================================= */
+
+  window.VimBuzz = {
+    getArticles: () => articles,
+
+    addArticle(article) {
+      articles.unshift({
+        id: uid("article"),
+        date: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        views: 0,
+        likes: 0,
+        shares: 0,
+        featured: false,
+        trending: false,
+        pinned: false,
+        sponsored: false,
+        status: "published",
+        ...article
+      });
+
+      saveArticles();
+      renderAll();
+
+      return articles[0];
     },
 
-    clear: function () {
-        localStorage.removeItem(
-            STORAGE_KEY
-        );
+    deleteArticle,
 
-        renderAll();
+    openArticle,
 
-        showToast(
-            "Articles cleared."
-        );
+    search: performSearch,
+
+    clearData() {
+      const confirmed = confirm(
+        "Delete all VimBuzz local data?"
+      );
+
+      if (!confirmed) return;
+
+      Object.values(KEYS).forEach(key =>
+        localStorage.removeItem(key)
+      );
+
+      location.reload();
     }
-};
-
-/* =========================
-   START APP
-========================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        console.log(
-            "VimBuzz V2 starting..."
-        );
-
-        /* Make sure sample articles exist */
-        getArticles();
-
-        /* Render immediately */
-        renderAll();
-
-        /* Features */
-        setupMobileMenu();
-        setupSearch();
-        setupEditor();
-        setupGlobalEvents();
-        setupModal();
-        setupSharing();
-        setupNewsletter();
-        setupCategoryLinks();
-        setupImportExport();
-        setupScrollTop();
-        setupYear();
-        setupConnectionStatus();
-
-        /* URL article */
-        openArticleFromURL();
-
-        console.log(
-            "VimBuzz V2 loaded successfully."
-        );
-    }
-);
+  };
+})();

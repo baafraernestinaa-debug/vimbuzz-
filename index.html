@@ -2,781 +2,2358 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="theme-color" content="#111827">
-  <meta name="description" content="VimBuzz — Ghana news, sports, entertainment, technology and lifestyle.">
-  <meta name="author" content="VimBuzz">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  >
 
-  <title>VimBuzz — Ghana News & Entertainment</title>
+  <meta
+    name="description"
+    content="VimBuzz - Ghana News, Sports, Entertainment, Technology and Lifestyle."
+  >
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#e91e63">
 
+  <title>VimBuzz - Ghana's Digital News Hub</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Fonts -->
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  >
+
+  <!-- Main CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- ================= HEADER ================= -->
-  <header class="site-header">
+<!-- =====================================================
+     PAGE LOADER
+===================================================== -->
 
-    <div class="top-header">
-      <div class="container header-inner">
-
-        <a href="#" class="logo" aria-label="VimBuzz Home">
-          <span class="logo-vim">Vim</span><span class="logo-buzz">Buzz</span>
-        </a>
-
-        <nav class="desktop-nav" aria-label="Main navigation">
-          <a href="#home" class="nav-link active">Home</a>
-          <a href="#news" class="nav-link">News</a>
-          <a href="#sports" class="nav-link">Sports</a>
-          <a href="#entertainment" class="nav-link">Entertainment</a>
-          <a href="#technology" class="nav-link">Technology</a>
-          <a href="#lifestyle" class="nav-link">Lifestyle</a>
-        </nav>
-
-        <div class="header-actions">
-          <button id="searchToggle" class="icon-btn" aria-label="Open search">
-            🔍
-          </button>
-
-          <button id="menuToggle" class="icon-btn menu-btn" aria-label="Open menu">
-            ☰
-          </button>
-        </div>
-
-      </div>
+<div id="pageLoader" class="page-loader">
+  <div class="loader-content">
+    <div class="loader-logo">
+      <span>Vim</span>Buzz
     </div>
 
-    <!-- Search -->
-    <div id="searchBox" class="search-box">
-      <div class="container">
-        <form id="searchForm">
-          <input
-            type="search"
-            id="searchInput"
-            placeholder="Search VimBuzz..."
-            autocomplete="off"
-          >
-          <button type="submit">Search</button>
-        </form>
-      </div>
+    <div class="loader-spinner"></div>
+
+    <p>Loading VimBuzz...</p>
+  </div>
+</div>
+
+
+<!-- =====================================================
+     BREAKING NEWS
+===================================================== -->
+
+<div id="breakingBar" class="breaking-bar">
+
+  <div class="breaking-inner">
+
+    <div class="breaking-label">
+      <span class="breaking-dot"></span>
+      <span>BREAKING</span>
     </div>
 
-    <!-- Mobile navigation -->
-    <nav id="mobileNav" class="mobile-nav" aria-label="Mobile navigation">
-      <a href="#home">Home</a>
-      <a href="#news">News</a>
-      <a href="#sports">Sports</a>
-      <a href="#entertainment">Entertainment</a>
-      <a href="#technology">Technology</a>
-      <a href="#lifestyle">Lifestyle</a>
-      <a href="#editor" class="mobile-editor-link">✍️ Editor</a>
+    <div id="breakingNews" class="breaking-news">
+      <a href="#">Loading latest updates...</a>
+    </div>
+
+    <button
+      id="breakingClose"
+      class="breaking-close"
+      aria-label="Close breaking news"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header id="siteHeader" class="site-header">
+
+  <div class="container">
+
+    <!-- Logo -->
+    <a href="#home" class="logo" aria-label="VimBuzz Home">
+      <span>Vim</span>Buzz
+    </a>
+
+
+    <!-- Desktop Navigation -->
+    <nav id="desktopNav" class="desktop-nav">
+
+      <a href="#home" class="active">
+        Home
+      </a>
+
+      <a href="#news">
+        News
+      </a>
+
+      <a href="#sports">
+        Sports
+      </a>
+
+      <a href="#entertainment">
+        Entertainment
+      </a>
+
+      <a href="#technology">
+        Technology
+      </a>
+
+      <a href="#lifestyle">
+        Lifestyle
+      </a>
+
+      <a href="#business">
+        Business
+      </a>
+
     </nav>
 
-  </header>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+
+      <!-- Search -->
+      <button
+        id="searchBtn"
+        class="icon-button"
+        aria-label="Search"
+        title="Search"
+      >
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
 
 
-  <!-- ================= TRENDING BAR ================= -->
-  <div class="trending-bar">
-    <div class="container trending-inner">
+      <!-- Saved -->
+      <button
+        id="savedBtn"
+        class="icon-button saved-button"
+        aria-label="Saved articles"
+        title="Saved articles"
+      >
+        <i class="fa-regular fa-bookmark"></i>
+        <span id="savedBadge" class="notification-badge">0</span>
+      </button>
 
-      <span class="trending-label">
-        🔥 Trending
-      </span>
 
-      <div id="trendingList" class="trending-list">
-        <a href="#news">Latest Ghana news</a>
-        <a href="#sports">Football updates</a>
-        <a href="#entertainment">Entertainment news</a>
-      </div>
+      <!-- Notifications -->
+      <button
+        id="notificationBtn"
+        class="icon-button"
+        aria-label="Notifications"
+        title="Notifications"
+      >
+        <i class="fa-regular fa-bell"></i>
+        <span id="notificationBadge" class="notification-badge">0</span>
+      </button>
+
+
+      <!-- Dark Mode -->
+      <button
+        id="darkModeBtn"
+        class="icon-button"
+        aria-label="Toggle dark mode"
+        title="Dark mode"
+      >
+        <i class="fa-solid fa-moon"></i>
+      </button>
+
+
+      <!-- Menu -->
+      <button
+        id="menuBtn"
+        class="menu-button"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+        <i class="fa-solid fa-bars"></i>
+      </button>
 
     </div>
+
   </div>
 
 
-  <!-- ================= MAIN ================= -->
-  <main id="home">
+  <!-- ===================================================
+       SEARCH PANEL
+  ==================================================== -->
 
-    <!-- HERO -->
-    <section class="hero-section">
-      <div class="container">
+  <div id="searchBox" class="search-box">
 
-        <div id="heroGrid" class="hero-grid">
-          <!-- JavaScript inserts hero articles -->
+    <form id="searchForm" class="search-form">
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search Ghana news, sports, entertainment..."
+        autocomplete="off"
+      >
+
+      <button type="submit" aria-label="Search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+
+    </form>
+
+    <div
+      id="searchSuggestions"
+      class="search-suggestions"
+    ></div>
+
+  </div>
+
+
+  <!-- ===================================================
+       MOBILE NAVIGATION
+  ==================================================== -->
+
+  <nav id="mobileNav" class="mobile-nav">
+
+    <a href="#home">
+      <i class="fa-solid fa-house"></i>
+      Home
+    </a>
+
+    <a href="#news">
+      <i class="fa-regular fa-newspaper"></i>
+      News
+    </a>
+
+    <a href="#sports">
+      <i class="fa-solid fa-futbol"></i>
+      Sports
+    </a>
+
+    <a href="#entertainment">
+      <i class="fa-solid fa-film"></i>
+      Entertainment
+    </a>
+
+    <a href="#technology">
+      <i class="fa-solid fa-microchip"></i>
+      Technology
+    </a>
+
+    <a href="#lifestyle">
+      <i class="fa-solid fa-heart"></i>
+      Lifestyle
+    </a>
+
+    <a href="#business">
+      <i class="fa-solid fa-briefcase"></i>
+      Business
+    </a>
+
+    <a href="#dashboard">
+      <i class="fa-solid fa-chart-line"></i>
+      Publisher Dashboard
+    </a>
+
+    <a href="#advertise">
+      <i class="fa-solid fa-bullhorn"></i>
+      Advertise
+    </a>
+
+  </nav>
+
+</header>
+
+
+<!-- =====================================================
+     OFFLINE / ONLINE STATUS
+===================================================== -->
+
+<div id="connectionStatus" class="connection-status">
+  <i class="fa-solid fa-wifi"></i>
+  <span id="connectionText">Online</span>
+</div>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main id="home">
+
+
+<!-- =====================================================
+     TRENDING
+===================================================== -->
+
+<section class="trending-section">
+
+  <div class="trending-inner">
+
+    <div class="trending-title">
+      <span>🔥</span>
+      <span>TRENDING</span>
+    </div>
+
+    <div
+      id="trendingList"
+      class="trending-list"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     FEATURED HERO
+===================================================== -->
+
+<section class="hero-section">
+
+  <div class="container">
+
+    <div
+      id="heroGrid"
+      class="hero-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     LATEST UPDATES
+===================================================== -->
+
+<section class="section">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="section-kicker">
+          Latest
+        </div>
+
+        <h2>
+          Latest Updates
+        </h2>
+      </div>
+
+      <a
+        href="#news"
+        class="section-link"
+      >
+        View all
+      </a>
+
+    </div>
+
+
+    <div
+      id="latestArticles"
+      class="article-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     POPULAR THIS WEEK
+===================================================== -->
+
+<section class="section">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="section-kicker">
+          Popular
+        </div>
+
+        <h2>
+          Most Read
+        </h2>
+      </div>
+
+    </div>
+
+
+    <div
+      id="mostRead"
+      class="most-read-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SEARCH RESULTS
+===================================================== -->
+
+<section
+  id="searchResultsSection"
+  class="section search-results-section"
+>
+
+  <div class="container">
+
+    <div class="search-results-heading">
+
+      <div>
+        <div class="section-kicker">
+          Search
+        </div>
+
+        <h2>
+          Search Results
+        </h2>
+      </div>
+
+      <button
+        id="clearSearch"
+        class="secondary-button"
+      >
+        Clear
+      </button>
+
+    </div>
+
+
+    <div
+      id="searchResults"
+      class="article-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     NEWS
+===================================================== -->
+
+<section
+  id="news"
+  class="section"
+>
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="section-kicker">
+          VimBuzz News
+        </div>
+
+        <h2>
+          Ghana News
+        </h2>
+      </div>
+
+      <button
+        class="section-link category-filter-btn"
+        data-category="News"
+      >
+        More News
+      </button>
+
+    </div>
+
+
+    <div
+      id="newsArticles"
+      class="article-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SPORTS
+===================================================== -->
+
+<section
+  id="sports"
+  class="section"
+>
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="section-kicker">
+          Football & Sports
+        </div>
+
+        <h2>
+          Sports
+        </h2>
+      </div>
+
+      <button
+        class="section-link category-filter-btn"
+        data-category="Sports"
+      >
+        More Sports
+      </button>
+
+    </div>
+
+
+    <div
+      id="sportsArticles"
+      class="article-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     ENTERTAINMENT
+===================================================== -->
+
+<section
+  id="entertainment"
+  class="section"
+>
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="section-kicker">
+          Showbiz
+        </div>
+
+        <h2>
+          Entertainment
+        </h2>
+      </div>
+
+      <button
+        class="section-link category-filter-btn"
+        data-category="Entertainment"
+      >
+        More Entertainment
+      </button>
+
+    </div>
+
+
+    <div
+      id="entertainmentArticles"
+      class="article-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     TECHNOLOGY
+===================================================== -->
+
+<section
+  id="technology"
+  class="section"
+>
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="section-kicker">
+          Digital Ghana
+        </div>
+
+        <h2>
+          Technology
+        </h2>
+      </div>
+
+      <button
+        class="section-link category-filter-btn"
+        data-category="Technology"
+      >
+        More Technology
+      </button>
+
+    </div>
+
+
+    <div
+      id="technologyArticles"
+      class="article-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     LIFESTYLE
+===================================================== -->
+
+<section
+  id="lifestyle"
+  class="section"
+>
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="section-kicker">
+          Lifestyle
+        </div>
+
+        <h2>
+          Lifestyle
+        </h2>
+      </div>
+
+      <button
+        class="section-link category-filter-btn"
+        data-category="Lifestyle"
+      >
+        More Lifestyle
+      </button>
+
+    </div>
+
+
+    <div
+      id="lifestyleArticles"
+      class="article-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     BUSINESS
+===================================================== -->
+
+<section
+  id="business"
+  class="section"
+>
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="section-kicker">
+          Ghana Business
+        </div>
+
+        <h2>
+          Business
+        </h2>
+
+      </div>
+
+      <button
+        class="section-link category-filter-btn"
+        data-category="Business"
+      >
+        More Business
+      </button>
+
+    </div>
+
+
+    <div
+      id="businessArticles"
+      class="article-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SPONSORED / BUSINESS PROMOTION
+===================================================== -->
+
+<section class="section sponsored-section">
+
+  <div class="container">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="section-kicker">
+          Sponsored
+        </div>
+
+        <h2>
+          Featured Businesses
+        </h2>
+      </div>
+
+    </div>
+
+
+    <div
+      id="businessPromotions"
+      class="article-grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     NEWSLETTER
+===================================================== -->
+
+<section
+  id="newsletter"
+  class="newsletter-section"
+>
+
+  <div class="container">
+
+    <div class="newsletter-card">
+
+      <div class="newsletter-icon">
+        <i class="fa-regular fa-envelope"></i>
+      </div>
+
+
+      <div class="newsletter-content">
+
+        <div class="section-kicker">
+          VimBuzz Newsletter
+        </div>
+
+        <h2>
+          Get Ghana's biggest stories in your inbox.
+        </h2>
+
+        <p>
+          Subscribe for news, sports, entertainment,
+          technology and lifestyle updates.
+        </p>
+
+      </div>
+
+
+      <form
+        id="newsletterForm"
+        class="newsletter-form"
+      >
+
+        <input
+          id="newsletterEmail"
+          type="email"
+          placeholder="Your email address"
+          required
+        >
+
+        <button type="submit">
+          Subscribe
+        </button>
+
+      </form>
+
+
+      <div
+        id="newsletterMessage"
+        class="newsletter-message"
+      ></div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     ADVERTISEMENT SLOT
+===================================================== -->
+
+<section
+  id="advertise"
+  class="ad-section"
+>
+
+  <div class="container">
+
+    <div class="ad-placeholder">
+
+      <div>
+        <i class="fa-solid fa-rectangle-ad"></i>
+
+        <span>
+          Advertisement Space
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     PUBLISHER DASHBOARD
+===================================================== -->
+
+<section
+  id="dashboard"
+  class="section dashboard-section"
+>
+
+  <div class="container">
+
+    <!-- Dashboard Header -->
+
+    <div class="dashboard-top">
+
+      <div>
+
+        <div class="section-kicker">
+          Publisher
+        </div>
+
+        <h2>
+          VimBuzz Dashboard
+        </h2>
+
+        <p class="dashboard-description">
+          Manage articles, drafts, analytics and your
+          local VimBuzz publication.
+        </p>
+
+      </div>
+
+
+      <button
+        id="newArticleBtn"
+        class="primary-button"
+      >
+        <i class="fa-solid fa-plus"></i>
+        New Article
+      </button>
+
+    </div>
+
+
+    <!-- =================================================
+         DASHBOARD STATS
+    ================================================== -->
+
+    <div class="stats-grid">
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          <i class="fa-regular fa-newspaper"></i>
+        </div>
+
+        <strong id="statArticles">
+          0
+        </strong>
+
+        <span>
+          Total Articles
+        </span>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          <i class="fa-solid fa-eye"></i>
+        </div>
+
+        <strong id="statViews">
+          0
+        </strong>
+
+        <span>
+          Total Views
+        </span>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          <i class="fa-regular fa-heart"></i>
+        </div>
+
+        <strong id="statLikes">
+          0
+        </strong>
+
+        <span>
+          Total Likes
+        </span>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          <i class="fa-regular fa-comment"></i>
+        </div>
+
+        <strong id="statComments">
+          0
+        </strong>
+
+        <span>
+          Total Comments
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ANALYTICS
+    ================================================== -->
+
+    <div class="analytics-grid">
+
+      <div class="analytics-card">
+
+        <h3>
+          Most Viewed
+        </h3>
+
+        <div
+          id="mostViewedTitle"
+          class="analytics-value"
+        >
+          —
+        </div>
+
+        <div
+          id="mostViewedViews"
+          class="analytics-number"
+        >
+          0 views
         </div>
 
       </div>
-    </section>
 
 
-    <!-- ================= SEARCH RESULTS ================= -->
-    <section id="searchResultsSection" class="section hidden">
+      <div class="analytics-card">
 
-      <div class="container">
+        <h3>
+          Most Liked
+        </h3>
 
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker">SEARCH</span>
-            <h2>Search Results</h2>
-          </div>
-
-          <button id="clearSearch" class="text-btn">
-            Clear
-          </button>
+        <div
+          id="mostLikedTitle"
+          class="analytics-value"
+        >
+          —
         </div>
 
-        <div id="searchResults" class="article-grid"></div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= LATEST NEWS ================= -->
-    <section id="news" class="section">
-
-      <div class="container">
-
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker">VIMBUZZ</span>
-            <h2>Latest News</h2>
-          </div>
-
-          <button
-            class="category-btn"
-            data-category="News"
-          >
-            View All →
-          </button>
-        </div>
-
-        <div id="latestArticles" class="article-grid">
-          <!-- Articles generated by JS -->
+        <div
+          id="mostLikedLikes"
+          class="analytics-number"
+        >
+          0 likes
         </div>
 
       </div>
 
-    </section>
 
+      <div class="analytics-card">
 
-    <!-- ================= MOST READ ================= -->
-    <section class="section most-read-section">
+        <h3>
+          Published
+        </h3>
 
-      <div class="container">
-
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker">POPULAR</span>
-            <h2>Most Read</h2>
-          </div>
+        <div
+          id="publishedCount"
+          class="analytics-value"
+        >
+          0
         </div>
 
-        <div id="mostRead" class="most-read-grid">
-          <!-- Most read generated by JS -->
+        <div class="analytics-number">
+          Published articles
         </div>
 
       </div>
 
-    </section>
 
+      <div class="analytics-card">
 
-    <!-- ================= SPORTS ================= -->
-    <section id="sports" class="section category-section">
+        <h3>
+          Drafts
+        </h3>
 
-      <div class="container">
-
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker">SPORTS</span>
-            <h2>Sports</h2>
-          </div>
-
-          <button class="category-btn" data-category="Sports">
-            More Sports →
-          </button>
+        <div
+          id="draftCount"
+          class="analytics-value"
+        >
+          0
         </div>
 
-        <div id="sportsArticles" class="article-grid"></div>
+        <div class="analytics-number">
+          Unpublished drafts
+        </div>
 
       </div>
 
-    </section>
+    </div>
 
 
-    <!-- ================= ENTERTAINMENT ================= -->
-    <section id="entertainment" class="section category-section">
+    <!-- =================================================
+         ARTICLE EDITOR
+    ================================================== -->
 
-      <div class="container">
+    <div
+      id="articleEditor"
+      class="editor-card"
+    >
 
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker">SHOWBIZ</span>
-            <h2>Entertainment</h2>
-          </div>
+      <div class="editor-header">
 
-          <button class="category-btn" data-category="Entertainment">
-            More Entertainment →
-          </button>
-        </div>
+        <h3 id="editorTitle">
+          Create Article
+        </h3>
 
-        <div id="entertainmentArticles" class="article-grid"></div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= TECHNOLOGY ================= -->
-    <section id="technology" class="section category-section">
-
-      <div class="container">
-
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker">DIGITAL</span>
-            <h2>Technology</h2>
-          </div>
-
-          <button class="category-btn" data-category="Technology">
-            More Technology →
-          </button>
-        </div>
-
-        <div id="technologyArticles" class="article-grid"></div>
+        <button
+          id="closeEditorBtn"
+          class="icon-button"
+          type="button"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
 
       </div>
 
-    </section>
+
+      <form id="articleForm">
+
+        <input
+          type="hidden"
+          id="articleId"
+        >
 
 
-    <!-- ================= LIFESTYLE ================= -->
-    <section id="lifestyle" class="section category-section">
+        <div class="form-grid">
 
-      <div class="container">
+          <!-- Title -->
 
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker">LIFE</span>
-            <h2>Lifestyle</h2>
-          </div>
+          <div class="form-group full-width">
 
-          <button class="category-btn" data-category="Lifestyle">
-            More Lifestyle →
-          </button>
-        </div>
-
-        <div id="lifestyleArticles" class="article-grid"></div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= NEWSLETTER ================= -->
-    <section class="newsletter-section">
-
-      <div class="container">
-
-        <div class="newsletter-card">
-
-          <div class="newsletter-content">
-            <span class="section-kicker">VIMBUZZ DAILY</span>
-
-            <h2>Get the latest stories</h2>
-
-            <p>
-              Stay updated with the latest Ghana news,
-              sports, entertainment and technology.
-            </p>
-          </div>
-
-          <form id="newsletterForm" class="newsletter-form">
+            <label for="articleTitle">
+              Article Title
+            </label>
 
             <input
-              type="email"
-              id="newsletterEmail"
-              placeholder="Your email address"
+              id="articleTitle"
+              type="text"
+              placeholder="Enter article title"
               required
             >
 
-            <button type="submit">
-              Subscribe
-            </button>
-
-          </form>
-
-          <p id="newsletterMessage" class="newsletter-message"></p>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ================= EDITOR ================= -->
-    <section id="editor" class="editor-section">
-
-      <div class="container">
-
-        <div class="editor-header">
-
-          <div>
-            <span class="section-kicker">VIMBUZZ CMS</span>
-            <h2>Article Editor</h2>
-            <p>
-              Create and manage articles directly from your browser.
-            </p>
           </div>
 
-          <div class="editor-actions">
-            <button id="newArticleBtn" class="primary-btn">
-              + New Article
-            </button>
 
-            <button id="exportBtn" class="secondary-btn">
-              Export
-            </button>
+          <!-- Category -->
 
-            <label class="secondary-btn import-label">
-              Import
-              <input
-                type="file"
-                id="importFile"
-                accept=".json"
-                hidden
-              >
+          <div class="form-group">
+
+            <label for="articleCategory">
+              Category
             </label>
-          </div>
 
-        </div>
-
-
-        <!-- Editor form -->
-        <div id="articleEditor" class="editor-card hidden">
-
-          <div class="editor-card-header">
-
-            <h3 id="editorTitle">
-              Create Article
-            </h3>
-
-            <button
-              id="closeEditorBtn"
-              class="close-btn"
-              aria-label="Close editor"
+            <select
+              id="articleCategory"
+              required
             >
-              ×
-            </button>
+
+              <option value="News">
+                News
+              </option>
+
+              <option value="Sports">
+                Sports
+              </option>
+
+              <option value="Entertainment">
+                Entertainment
+              </option>
+
+              <option value="Technology">
+                Technology
+              </option>
+
+              <option value="Lifestyle">
+                Lifestyle
+              </option>
+
+              <option value="Business">
+                Business
+              </option>
+
+            </select>
 
           </div>
 
 
-          <form id="articleForm">
+          <!-- Author -->
+
+          <div class="form-group">
+
+            <label for="articleAuthor">
+              Author
+            </label>
 
             <input
-              type="hidden"
-              id="articleId"
+              id="articleAuthor"
+              type="text"
+              placeholder="Author name"
+              value="VimBuzz"
             >
 
-
-            <div class="form-group">
-
-              <label for="articleTitle">
-                Article Title
-              </label>
-
-              <input
-                type="text"
-                id="articleTitle"
-                placeholder="Enter article title"
-                maxlength="150"
-                required
-              >
-
-            </div>
+          </div>
 
 
-            <div class="form-row">
+          <!-- Image -->
 
-              <div class="form-group">
+          <div class="form-group full-width">
 
-                <label for="articleCategory">
-                  Category
-                </label>
+            <label for="articleImage">
+              Cover Image URL
+            </label>
 
-                <select id="articleCategory" required>
-                  <option value="News">News</option>
-                  <option value="Sports">Sports</option>
-                  <option value="Entertainment">Entertainment</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Lifestyle">Lifestyle</option>
-                </select>
+            <input
+              id="articleImage"
+              type="url"
+              placeholder="https://..."
+            >
 
-              </div>
+          </div>
 
 
-              <div class="form-group">
+          <!-- Excerpt -->
 
-                <label for="articleAuthor">
-                  Author
-                </label>
+          <div class="form-group full-width">
 
-                <input
-                  type="text"
-                  id="articleAuthor"
-                  value="VimBuzz"
-                  placeholder="Author name"
-                >
+            <label for="articleExcerpt">
+              Short Description
+            </label>
 
-              </div>
+            <textarea
+              id="articleExcerpt"
+              placeholder="Write a short description..."
+            ></textarea>
 
-            </div>
+          </div>
 
 
-            <div class="form-group">
+          <!-- Content -->
 
-              <label for="articleImage">
-                Image URL
-              </label>
+          <div class="form-group full-width">
 
-              <input
-                type="url"
-                id="articleImage"
-                placeholder="https://example.com/image.jpg"
-              >
+            <label for="articleContent">
+              Article Content
+            </label>
 
-              <small>
-                Use a direct image URL.
-              </small>
+            <textarea
+              id="articleContent"
+              placeholder="Write your complete article here..."
+              required
+            ></textarea>
 
-            </div>
+          </div>
 
 
-            <div class="form-group">
+          <!-- Tags -->
 
-              <label for="articleExcerpt">
-                Short Description
-              </label>
+          <div class="form-group full-width">
 
-              <textarea
-                id="articleExcerpt"
-                rows="3"
-                maxlength="300"
-                placeholder="Write a short description..."
-                required
-              ></textarea>
+            <label for="articleTags">
+              Article Tags
+            </label>
 
-            </div>
+            <input
+              id="articleTags"
+              type="text"
+              placeholder="Ghana, football, Kumasi, technology"
+            >
 
-
-            <div class="form-group">
-
-              <label for="articleContent">
-                Article Content
-              </label>
-
-              <textarea
-                id="articleContent"
-                rows="10"
-                placeholder="Write your full article here..."
-                required
-              ></textarea>
-
-            </div>
+          </div>
 
 
-            <div class="form-checks">
+          <!-- Status -->
 
-              <label class="checkbox-label">
+          <div class="form-group">
+
+            <label for="articleStatus">
+              Publication Status
+            </label>
+
+            <select id="articleStatus">
+
+              <option value="published">
+                Published
+              </option>
+
+              <option value="draft">
+                Draft
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- Featured -->
+
+          <div class="form-group">
+
+            <label>
+              Article Options
+            </label>
+
+            <div class="publish-options">
+
+              <label class="check-option">
+
                 <input
                   type="checkbox"
                   id="articleFeatured"
                 >
-                <span>Featured article</span>
+
+                Featured
+
               </label>
 
-              <label class="checkbox-label">
+
+              <label class="check-option">
+
                 <input
                   type="checkbox"
                   id="articleTrending"
                 >
-                <span>Trending article</span>
+
+                Trending
+
+              </label>
+
+
+              <label class="check-option">
+
+                <input
+                  type="checkbox"
+                  id="articleBreaking"
+                >
+
+                Breaking
+
               </label>
 
             </div>
 
-
-            <div class="form-actions">
-
-              <button
-                type="submit"
-                class="primary-btn"
-              >
-                Save Article
-              </button>
-
-              <button
-                type="button"
-                id="cancelEditorBtn"
-                class="secondary-btn"
-              >
-                Cancel
-              </button>
-
-            </div>
-
-          </form>
-
-        </div>
-
-
-        <!-- Manage articles -->
-        <div class="manage-articles">
-
-          <div class="manage-header">
-
-            <h3>Manage Articles</h3>
-
-            <span id="articleCount">
-              0 articles
-            </span>
-
-          </div>
-
-          <div id="adminArticlesList" class="admin-articles-list">
-            <!-- Admin articles generated by JS -->
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- ================= ARTICLE MODAL ================= -->
-  <div
-    id="articleModal"
-    class="modal"
-    aria-hidden="true"
-  >
-
-    <div class="modal-overlay" id="modalOverlay"></div>
-
-    <article class="article-modal">
-
-      <button
-        id="closeModal"
-        class="modal-close"
-        aria-label="Close article"
-      >
-        ×
-      </button>
-
-      <div id="modalImageWrap" class="modal-image-wrap">
-        <img id="modalImage" src="" alt="">
-      </div>
-
-      <div class="modal-content">
-
-        <div class="article-meta">
-
-          <span id="modalCategory" class="category-tag">
-            News
-          </span>
-
-          <span id="modalDate"></span>
-
-        </div>
-
-        <h1 id="modalTitle">
-          Article title
-        </h1>
-
-        <div class="modal-author">
-          By <strong id="modalAuthor">VimBuzz</strong>
-        </div>
-
-        <p id="modalExcerpt" class="modal-excerpt"></p>
-
-        <div
-          id="modalBody"
-          class="article-body"
-        ></div>
-
-
-        <div class="share-section">
-
-          <strong>Share this story</strong>
-
-          <div class="share-buttons">
-
-            <button
-              id="shareWhatsApp"
-              class="share-btn whatsapp"
-            >
-              WhatsApp
-            </button>
-
-            <button
-              id="shareFacebook"
-              class="share-btn facebook"
-            >
-              Facebook
-            </button>
-
-            <button
-              id="shareNative"
-              class="share-btn native"
-            >
-              Share
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </article>
-
-  </div>
-
-
-  <!-- ================= TOAST ================= -->
-  <div
-    id="toast"
-    class="toast"
-    role="status"
-    aria-live="polite"
-  ></div>
-
-
-  <!-- ================= FOOTER ================= -->
-  <footer class="site-footer">
-
-    <div class="container">
-
-      <div class="footer-grid">
-
-        <div class="footer-brand">
-
-          <a href="#home" class="logo footer-logo">
-            <span class="logo-vim">Vim</span><span class="logo-buzz">Buzz</span>
-          </a>
-
-          <p>
-            Ghana's digital destination for news,
-            sports, entertainment, technology and lifestyle.
-          </p>
-
-          <div class="social-links">
-
-            <a
-              href="https://facebook.com/"
-              target="_blank"
-              rel="noopener"
-              aria-label="Facebook"
-            >
-              Facebook
-            </a>
-
-            <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noopener"
-              aria-label="Instagram"
-            >
-              Instagram
-            </a>
-
-            <a
-              href="https://www.tiktok.com/"
-              target="_blank"
-              rel="noopener"
-              aria-label="TikTok"
-            >
-              TikTok
-            </a>
-
-            <a
-              href="https://wa.me/"
-              target="_blank"
-              rel="noopener"
-              aria-label="WhatsApp"
-            >
-              WhatsApp
-            </a>
-
           </div>
 
         </div>
 
 
-        <div class="footer-column">
+        <div class="editor-actions">
 
-          <h3>Categories</h3>
+          <button
+            type="submit"
+            class="primary-button"
+          >
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Article
+          </button>
 
-          <a href="#news">News</a>
-          <a href="#sports">Sports</a>
-          <a href="#entertainment">Entertainment</a>
-          <a href="#technology">Technology</a>
-          <a href="#lifestyle">Lifestyle</a>
+          <button
+            type="button"
+            id="cancelEditorBtn"
+            class="secondary-button"
+          >
+            Cancel
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+
+    <!-- =================================================
+         ARTICLE MANAGEMENT
+    ================================================== -->
+
+    <div class="manage-card">
+
+      <div class="manage-heading">
+
+        <div>
+
+          <div class="section-kicker">
+            Content
+          </div>
+
+          <h3>
+            Manage Articles
+          </h3>
 
         </div>
 
-
-        <div class="footer-column">
-
-          <h3>VimBuzz</h3>
-
-          <a href="#home">Home</a>
-          <a href="#editor">Article Editor</a>
-          <a href="#home">About</a>
-          <a href="#home">Contact</a>
-
-        </div>
+        <span
+          id="articleCount"
+          class="article-count"
+        >
+          0 articles
+        </span>
 
       </div>
 
 
-      <div class="footer-bottom">
+      <div
+        id="adminArticlesList"
+        class="admin-articles-list"
+      ></div>
 
-        <p>
-          © <span id="currentYear"></span> VimBuzz.
-          All rights reserved.
-        </p>
+    </div>
 
-        <p>
-          Built with ❤️ in Ghana 🇬🇭
-        </p>
+
+    <!-- =================================================
+         BACKUP / IMPORT / EXPORT
+    ================================================== -->
+
+    <div class="backup-card">
+
+      <h3>
+        Backup & Data
+      </h3>
+
+      <p>
+        Export your VimBuzz content or restore it later.
+        Your data is stored locally in this browser.
+      </p>
+
+
+      <div class="backup-actions">
+
+        <button
+          id="exportBtn"
+          class="secondary-button"
+        >
+          <i class="fa-solid fa-download"></i>
+          Export Articles
+        </button>
+
+
+        <label class="file-button">
+
+          <i class="fa-solid fa-upload"></i>
+
+          Import Articles
+
+          <input
+            id="importFile"
+            type="file"
+            accept=".json,application/json"
+            hidden
+          >
+
+        </label>
 
       </div>
 
     </div>
 
-  </footer>
+  </div>
+
+</section>
 
 
-  <!-- ================= SCROLL TOP ================= -->
-  <button
-    id="scrollTop"
-    class="scroll-top"
-    aria-label="Scroll to top"
+</main>
+
+
+<!-- =====================================================
+     ARTICLE MODAL
+===================================================== -->
+
+<div
+  id="articleModal"
+  class="article-modal"
+  aria-hidden="true"
+>
+
+  <div
+    id="modalOverlay"
+    class="modal-overlay"
+  ></div>
+
+
+  <article
+    id="modalDialog"
+    class="modal-dialog"
   >
-    ↑
+
+    <button
+      id="closeModal"
+      class="modal-close"
+      aria-label="Close article"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+
+    <!-- Reading Progress -->
+
+    <div
+      id="readingProgress"
+      class="reading-progress"
+    ></div>
+
+
+    <!-- Image -->
+
+    <div
+      id="modalImageWrap"
+      class="modal-image-wrap"
+    >
+
+      <img
+        id="modalImage"
+        src=""
+        alt="Article image"
+      >
+
+    </div>
+
+
+    <!-- Content -->
+
+    <div class="modal-content">
+
+      <div
+        id="modalCategory"
+        class="category-tag"
+      >
+        NEWS
+      </div>
+
+
+      <div
+        id="modalDate"
+        class="article-meta"
+      >
+        Recently
+      </div>
+
+
+      <h1 id="modalTitle">
+        Article title
+      </h1>
+
+
+      <div
+        id="modalAuthor"
+        class="modal-author"
+      >
+        By VimBuzz
+      </div>
+
+
+      <div
+        id="modalTags"
+        class="article-tags"
+      ></div>
+
+
+      <p
+        id="modalExcerpt"
+        class="modal-excerpt"
+      ></p>
+
+
+      <!-- =================================================
+           ARTICLE ACTIONS
+      ================================================== -->
+
+      <div class="article-actions">
+
+        <button
+          id="likeArticleBtn"
+          class="article-action"
+        >
+
+          <i class="fa-regular fa-heart"></i>
+
+          <span>
+            Like
+          </span>
+
+          <strong id="modalLikes">
+            0
+          </strong>
+
+        </button>
+
+
+        <button
+          id="bookmarkArticleBtn"
+          class="article-action"
+        >
+
+          <i class="fa-regular fa-bookmark"></i>
+
+          <span>
+            Save
+          </span>
+
+        </button>
+
+
+        <button
+          id="copyArticleBtn"
+          class="article-action"
+        >
+
+          <i class="fa-regular fa-copy"></i>
+
+          Copy Link
+
+        </button>
+
+      </div>
+
+
+      <!-- =================================================
+           SHARE
+      ================================================== -->
+
+      <div class="share-section">
+
+        <h3>
+          Share this article
+        </h3>
+
+        <div class="share-buttons">
+
+          <button
+            id="shareWhatsApp"
+            class="share whatsapp"
+          >
+            <i class="fa-brands fa-whatsapp"></i>
+            WhatsApp
+          </button>
+
+
+          <button
+            id="shareFacebook"
+            class="share facebook"
+          >
+            <i class="fa-brands fa-facebook-f"></i>
+            Facebook
+          </button>
+
+
+          <button
+            id="shareNative"
+            class="share native"
+          >
+            <i class="fa-solid fa-share-nodes"></i>
+            Share
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           TEXT TO SPEECH
+      ================================================== -->
+
+      <div class="reader-section">
+
+        <h3>
+          Listen to article
+        </h3>
+
+        <button
+          id="readArticleBtn"
+          class="reader-button"
+        >
+          <i class="fa-solid fa-volume-high"></i>
+          Read Article
+        </button>
+
+
+        <button
+          id="stopReadingBtn"
+          class="reader-button"
+        >
+          <i class="fa-solid fa-stop"></i>
+          Stop
+        </button>
+
+      </div>
+
+
+      <!-- =================================================
+           ARTICLE BODY
+      ================================================== -->
+
+      <div
+        id="modalBody"
+        class="modal-body"
+      ></div>
+
+
+      <!-- =================================================
+           COMMENTS
+      ================================================== -->
+
+      <section class="comments-section">
+
+        <div class="comments-heading">
+
+          <h3>
+            Comments
+          </h3>
+
+          <span
+            id="commentCount"
+            class="comment-count"
+          >
+            0 comments
+          </span>
+
+        </div>
+
+
+        <form
+          id="commentForm"
+          class="comment-form"
+        >
+
+          <input
+            id="commentName"
+            type="text"
+            placeholder="Your name"
+            maxlength="60"
+            required
+          >
+
+
+          <textarea
+            id="commentText"
+            placeholder="Write a comment..."
+            maxlength="500"
+            required
+          ></textarea>
+
+
+          <button
+            type="submit"
+            class="primary-button"
+          >
+            <i class="fa-regular fa-paper-plane"></i>
+            Post Comment
+          </button>
+
+        </form>
+
+
+        <div
+          id="commentsList"
+          class="comments-list"
+        ></div>
+
+      </section>
+
+
+      <!-- =================================================
+           RELATED
+      ================================================== -->
+
+      <section class="related-section">
+
+        <h3>
+          You May Also Like
+        </h3>
+
+        <div
+          id="relatedArticles"
+          class="related-grid"
+        ></div>
+
+      </section>
+
+    </div>
+
+  </article>
+
+</div>
+
+
+<!-- =====================================================
+     SAVED ARTICLES PANEL
+===================================================== -->
+
+<div
+  id="savedOverlay"
+  class="saved-overlay"
+></div>
+
+
+<aside
+  id="savedPanel"
+  class="saved-panel"
+  aria-hidden="true"
+>
+
+  <div class="saved-header">
+
+    <h3>
+      <i class="fa-regular fa-bookmark"></i>
+      Saved Articles
+    </h3>
+
+    <button
+      id="closeSavedBtn"
+      class="icon-button"
+      aria-label="Close saved articles"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+  </div>
+
+
+  <div
+    id="savedArticles"
+    class="saved-articles"
+  ></div>
+
+</aside>
+
+
+<!-- =====================================================
+     NOTIFICATION PANEL
+===================================================== -->
+
+<div
+  id="notificationPanel"
+  class="notification-panel"
+>
+
+  <div class="notification-header">
+
+    <h3>
+      Notifications
+    </h3>
+
+    <button
+      id="markNotificationsRead"
+      class="secondary-button"
+    >
+      Mark all read
+    </button>
+
+  </div>
+
+
+  <div
+    id="notificationList"
+    class="notification-list"
+  ></div>
+
+</div>
+
+
+<!-- =====================================================
+     SETTINGS PANEL
+===================================================== -->
+
+<div
+  id="settingsPanel"
+  class="settings-panel"
+>
+
+  <div class="settings-header">
+
+    <h3>
+      Reading Settings
+    </h3>
+
+    <button
+      id="closeSettingsBtn"
+      class="icon-button"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+  </div>
+
+
+  <div class="settings-body">
+
+    <!-- Font Size -->
+
+    <div class="setting-row">
+
+      <div>
+
+        <strong>
+          Font Size
+        </strong>
+
+        <span>
+          Adjust reading text
+        </span>
+
+      </div>
+
+      <div class="font-controls">
+
+        <button
+          id="fontDecrease"
+          class="secondary-button"
+        >
+          A-
+        </button>
+
+        <button
+          id="fontReset"
+          class="secondary-button"
+        >
+          A
+        </button>
+
+        <button
+          id="fontIncrease"
+          class="secondary-button"
+        >
+          A+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- Reading Mode -->
+
+    <div class="setting-row">
+
+      <div>
+
+        <strong>
+          Reading Mode
+        </strong>
+
+        <span>
+          Reduce distractions
+        </span>
+
+      </div>
+
+      <button
+        id="readingModeBtn"
+        class="secondary-button"
+      >
+        Enable
+      </button>
+
+    </div>
+
+
+    <!-- Dark Mode -->
+
+    <div class="setting-row">
+
+      <div>
+
+        <strong>
+          Dark Mode
+        </strong>
+
+        <span>
+          Change appearance
+        </span>
+
+      </div>
+
+      <button
+        id="settingsDarkModeBtn"
+        class="secondary-button"
+      >
+        Toggle
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     SPONSORED ARTICLE MODAL
+===================================================== -->
+
+<div
+  id="sponsoredModal"
+  class="article-modal"
+>
+
+  <div class="modal-overlay"></div>
+
+  <div class="modal-dialog">
+
+    <button
+      id="closeSponsoredModal"
+      class="modal-close"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+
+    <div class="modal-content">
+
+      <div class="category-tag">
+        SPONSORED
+      </div>
+
+      <h1 id="sponsoredTitle">
+        Featured Business
+      </h1>
+
+      <p id="sponsoredDescription">
+        Promote your business to VimBuzz readers.
+      </p>
+
+      <a
+        id="sponsoredLink"
+        href="#"
+        class="primary-button"
+      >
+        Learn More
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADVERTISE WITH US MODAL
+===================================================== -->
+
+<div
+  id="advertiseModal"
+  class="article-modal"
+>
+
+  <div class="modal-overlay"></div>
+
+  <div class="modal-dialog">
+
+    <button
+      id="closeAdvertiseModal"
+      class="modal-close"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+
+    <div class="modal-content">
+
+      <div class="category-tag">
+        ADVERTISE
+      </div>
+
+      <h1>
+        Advertise on VimBuzz
+      </h1>
+
+      <p class="modal-excerpt">
+        Put your business, product or service in front
+        of VimBuzz readers.
+      </p>
+
+
+      <form id="advertiseForm" class="comment-form">
+
+        <input
+          id="advertiserName"
+          type="text"
+          placeholder="Business name"
+          required
+        >
+
+        <input
+          id="advertiserEmail"
+          type="email"
+          placeholder="Email address"
+          required
+        >
+
+        <input
+          id="advertiserPhone"
+          type="tel"
+          placeholder="Phone / WhatsApp"
+        >
+
+        <select id="advertiserPackage">
+
+          <option value="banner">
+            Banner Advertisement
+          </option>
+
+          <option value="sponsored">
+            Sponsored Article
+          </option>
+
+          <option value="featured">
+            Featured Business
+          </option>
+
+          <option value="newsletter">
+            Newsletter Sponsorship
+          </option>
+
+        </select>
+
+
+        <textarea
+          id="advertiserMessage"
+          placeholder="Tell us about your promotion..."
+        ></textarea>
+
+
+        <button
+          type="submit"
+          class="primary-button"
+        >
+          Send Advertising Request
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="site-footer">
+
+  <div class="container">
+
+    <div class="footer-grid">
+
+
+      <!-- Brand -->
+
+      <div class="footer-brand">
+
+        <a
+          href="#home"
+          class="logo"
+        >
+          <span>Vim</span>Buzz
+        </a>
+
+        <p>
+          Ghana's digital hub for news, sports,
+          entertainment, technology, business and lifestyle.
+        </p>
+
+
+        <div class="social-links">
+
+          <a
+            href="#"
+            aria-label="Facebook"
+          >
+            <i class="fa-brands fa-facebook-f"></i>
+          </a>
+
+          <a
+            href="#"
+            aria-label="Instagram"
+          >
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+
+          <a
+            href="#"
+            aria-label="TikTok"
+          >
+            <i class="fa-brands fa-tiktok"></i>
+          </a>
+
+          <a
+            href="#"
+            aria-label="X"
+          >
+            <i class="fa-brands fa-x-twitter"></i>
+          </a>
+
+          <a
+            href="#"
+            aria-label="YouTube"
+          >
+            <i class="fa-brands fa-youtube"></i>
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <!-- Categories -->
+
+      <div class="footer-column">
+
+        <h3>
+          Categories
+        </h3>
+
+        <a href="#news">
+          News
+        </a>
+
+        <a href="#sports">
+          Sports
+        </a>
+
+        <a href="#entertainment">
+          Entertainment
+        </a>
+
+        <a href="#technology">
+          Technology
+        </a>
+
+        <a href="#lifestyle">
+          Lifestyle
+        </a>
+
+        <a href="#business">
+          Business
+        </a>
+
+      </div>
+
+
+      <!-- Company -->
+
+      <div class="footer-column">
+
+        <h3>
+          VimBuzz
+        </h3>
+
+        <a href="#about">
+          About Us
+        </a>
+
+        <a href="#contact">
+          Contact
+        </a>
+
+        <a href="#advertise">
+          Advertise
+        </a>
+
+        <a href="#dashboard">
+          Publisher Dashboard
+        </a>
+
+      </div>
+
+
+      <!-- Legal -->
+
+      <div class="footer-column">
+
+        <h3>
+          Information
+        </h3>
+
+        <a href="#privacy">
+          Privacy
+        </a>
+
+        <a href="#terms">
+          Terms
+        </a>
+
+        <a href="#newsletter">
+          Newsletter
+        </a>
+
+        <a href="#home">
+          Back to top
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      ©
+      <span id="currentYear"></span>
+      VimBuzz. All rights reserved.
+
+    </div>
+
+  </div>
+
+</footer>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+  id="toast"
+  class="toast"
+  role="status"
+  aria-live="polite"
+>
+  <span id="toastMessage">
+    Done
+  </span>
+</div>
+
+
+<!-- =====================================================
+     SCROLL TO TOP
+===================================================== -->
+
+<button
+  id="scrollTop"
+  class="scroll-top"
+  aria-label="Scroll to top"
+  title="Scroll to top"
+>
+
+  <i class="fa-solid fa-arrow-up"></i>
+
+</button>
+
+
+<!-- =====================================================
+     DYNAMIC SHARE MENU
+===================================================== -->
+
+<div
+  id="shareMenu"
+  class="share-menu"
+>
+
+  <button id="shareCopy">
+    <i class="fa-regular fa-copy"></i>
+    Copy Link
   </button>
 
+  <button id="shareWhatsAppMenu">
+    <i class="fa-brands fa-whatsapp"></i>
+    WhatsApp
+  </button>
 
-  <script src="script.js"></script>
+  <button id="shareFacebookMenu">
+    <i class="fa-brands fa-facebook"></i>
+    Facebook
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script src="script.js"></script>
 
 </body>
 </html>
